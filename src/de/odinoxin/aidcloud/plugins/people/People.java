@@ -1,7 +1,6 @@
 package de.odinoxin.aidcloud.plugins.people;
 
 import de.odinoxin.aidcloud.DBMgr;
-import de.odinoxin.aidcloud.ServiceResult;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
@@ -28,8 +27,7 @@ public class People {
     }
 
     @WebMethod
-    public ServiceResult<Integer> save(Person p) {
-        ServiceResult<Integer> res = new ServiceResult<>();
+    public int save(Person p) {
         try {
 
             if (p.getId() == 0) {
@@ -43,7 +41,7 @@ public class People {
                 if (insertStmt.executeUpdate() == 1) {
                     ResultSet key = insertStmt.getGeneratedKeys();
                     if (key.next())
-                        res = new ServiceResult<>(key.getInt(1));
+                        return key.getInt(1);
                 }
             } else {
                 PreparedStatement updateStmt = DBMgr.DB.prepareStatement("UPDATE People SET Code = ?, Name = ?, Forename = ?, Language = ?, Address = ? WHERE ID = ?");
@@ -54,18 +52,17 @@ public class People {
                 updateStmt.setInt(5, p.getAddressId());
                 updateStmt.setInt(6, p.getId());
                 if (updateStmt.executeUpdate() == 1)
-                    res = new ServiceResult<>(p.getId());
+                    return p.getId();
             }
         } catch (java.sql.SQLException ex) {
-            res = new ServiceResult<>(0, ex.getMessage());
+            ex.printStackTrace();
         }
-        return res;
+        return 0;
     }
 
     @WebMethod
     public boolean delete(int personId) {
         try {
-
             PreparedStatement deleteStmt = DBMgr.DB.prepareStatement("DELETE FROM People WHERE ID = ?");
             deleteStmt.setInt(1, personId);
             if (deleteStmt.executeUpdate() == 1) {
