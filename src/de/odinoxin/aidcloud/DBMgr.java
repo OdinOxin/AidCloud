@@ -10,7 +10,7 @@ public class DBMgr {
     static {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            DBMgr.DB = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=AidDesk", "GoBabyGo", "comeback");
+            DBMgr.DB = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=AidDesk", "", "");
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
