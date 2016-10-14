@@ -7,29 +7,11 @@
         <listener-class>com.sun.xml.ws.transport.http.servlet.WSServletContextListener</listener-class>
     </listener>
     <servlet>
-        <servlet-name>Login</servlet-name>
+        <servlet-name>AidCloud</servlet-name>
         <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Login</servlet-name>
-        <url-pattern>/Login</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>People</servlet-name>
-        <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>People</servlet-name>
-        <url-pattern>/People</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>Address</servlet-name>
-        <servlet-class>com.sun.xml.ws.transport.http.servlet.WSServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Address</servlet-name>
-        <url-pattern>/Address</url-pattern>
+        <servlet-name>AidCloud</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 </web-app>
