@@ -62,9 +62,7 @@ public class Address {
         try {
             PreparedStatement deleteStmt = DBMgr.DB.prepareStatement("DELETE FROM Addresses WHERE ID = ?");
             deleteStmt.setInt(1, addressId);
-            if (deleteStmt.executeUpdate() == 1) {
-                return true;
-            }
+            return deleteStmt.executeUpdate() == 1;
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
