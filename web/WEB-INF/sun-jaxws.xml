@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <endpoints xmlns='http://java.sun.com/xml/ns/jax-ws/ri/runtime' version='2.0'>
-    
+    <endpoint name='checkLogin' implementation='de.odinoxin.aidcloud.Login' url-pattern='/Login'/>
+    <endpoint name='getPerson' implementation='de.odinoxin.aidcloud.plugins.people.People' url-pattern='/People'/>
+    <endpoint name='savePerson' implementation='de.odinoxin.aidcloud.plugins.people.People' url-pattern='/People'/>
+    <endpoint name='deletePerson' implementation='de.odinoxin.aidcloud.plugins.people.People' url-pattern='/People'/>
+    <endpoint name='getAddress' implementation='de.odinoxin.aidcloud.plugins.addresses.Address' url-pattern='/Address'/>
+    <endpoint name='saveAddress' implementation='de.odinoxin.aidcloud.plugins.addresses.Address' url-pattern='/Address'/>
+    <endpoint name='deleteAddress' implementation='de.odinoxin.aidcloud.plugins.addresses.Address' url-pattern='/Address'/>
 </endpoints>

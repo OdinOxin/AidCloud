@@ -2,25 +2,38 @@ package de.odinoxin.aidcloud.plugins.people;
 
 import de.odinoxin.aidcloud.plugins.RecordItem;
 
-public class Person extends RecordItem {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "PersonEntity")
+public class PersonEntity extends RecordItem {
+
+    @XmlElement(name = "name")
     private String name;
+    @XmlElement(name = "forename")
     private String forename;
+    @XmlElement(name = "code")
     private String code;
+    @XmlElement(name = "pwd")
     private String pwd;
+    @XmlElement(name = "language")
     private String language;
+    @XmlElement(name = "addressId")
     private Integer addressId;
 
-    public Person() {
+    public PersonEntity() {
         super();
     }
 
-    public Person(int id) {
+    public PersonEntity(int id) {
         this();
         this.id = id;
     }
 
-    public Person(int id, String name, String forename, String code, String language, int addressId) {
+    public PersonEntity(int id, String name, String forename, String code, String language, int addressId) {
         this(id);
         this.name = name;
         this.forename = forename;

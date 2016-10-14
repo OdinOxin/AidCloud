@@ -13,13 +13,13 @@ import java.sql.Statement;
 public class People {
 
     @WebMethod
-    public Person getPerson(int personId) {
+    public PersonEntity getPerson(int personId) {
         try {
             PreparedStatement statement = DBMgr.DB.prepareStatement("SELECT * FROM People WHERE ID = ?");
             statement.setInt(1, personId);
             ResultSet dbRes = statement.executeQuery();
             if (dbRes.next())
-                return new Person(dbRes.getInt("ID"), dbRes.getString("Name"), dbRes.getString("Forename"), dbRes.getString("Code"), dbRes.getString("Language"), dbRes.getInt("Address"));
+                return new PersonEntity(dbRes.getInt("ID"), dbRes.getString("Name"), dbRes.getString("Forename"), dbRes.getString("Code"), dbRes.getString("Language"), dbRes.getInt("Address"));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -27,9 +27,8 @@ public class People {
     }
 
     @WebMethod
-    public int save(Person p) {
+    public int savePerson(PersonEntity p) {
         try {
-
             if (p.getId() == 0) {
                 PreparedStatement insertStmt = DBMgr.DB.prepareStatement("INSERT INTO People VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
                 insertStmt.setString(1, p.getCode());
@@ -54,21 +53,20 @@ public class People {
                 if (updateStmt.executeUpdate() == 1)
                     return p.getId();
             }
-        } catch (java.sql.SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return 0;
     }
 
     @WebMethod
-    public boolean delete(int personId) {
+    public boolean deletePerson(int personId) {
         try {
             PreparedStatement deleteStmt = DBMgr.DB.prepareStatement("DELETE FROM People WHERE ID = ?");
             deleteStmt.setInt(1, personId);
-            if (deleteStmt.executeUpdate() == 1) {
+            if (deleteStmt.executeUpdate() == 1)
                 return true;
-            }
-        } catch (java.sql.SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return false;
