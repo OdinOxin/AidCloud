@@ -1,6 +1,7 @@
 package de.odinoxin.aidcloud;
 
-import de.odinoxin.aidcloud.plugins.addresses.Address;
+import de.odinoxin.aidcloud.plugins.addresses.Addresses;
+import de.odinoxin.aidcloud.plugins.countries.Countries;
 import de.odinoxin.aidcloud.plugins.people.People;
 import de.odinoxin.aidcloud.refbox.RefBox;
 
@@ -14,7 +15,8 @@ public class AidCloud {
         Endpoint.publish(AidCloud.ADDRESS + "/Translator", new Translator());
         Endpoint.publish(AidCloud.ADDRESS + "/RefBox", new RefBox());
         Endpoint.publish(AidCloud.ADDRESS + "/People", new People());
-        Endpoint.publish(AidCloud.ADDRESS + "/Address", new Address());
+        Endpoint.publish(AidCloud.ADDRESS + "/Addresses", new Addresses());
+        Endpoint.publish(AidCloud.ADDRESS + "/Countries", new Countries());
 
         System.out.println("AidCloud is online now!");
     }

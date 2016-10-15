@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 @WebService
-public class Address {
+public class Addresses {
     @WebMethod
     public AddressEntity getAddress(int addressId) {
         try {

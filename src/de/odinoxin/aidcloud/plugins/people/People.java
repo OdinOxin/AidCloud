@@ -72,6 +72,7 @@ public class People {
         return false;
     }
 
+    @WebMethod
     public boolean changePwd(@WebParam(name = "personId") int personId, @WebParam(name = "oldPwd") String oldPwd, @WebParam(name = "newPwd") String newPwd) {
         if (personId == 0)
             return false;
