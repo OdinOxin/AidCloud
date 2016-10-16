@@ -37,7 +37,7 @@ public class People {
                 insertStmt.setString(3, p.getForename());
                 insertStmt.setString(4, p.getPwd() == null ? "" : p.getPwd());
                 insertStmt.setString(5, p.getLanguage());
-                insertStmt.setInt(6, p.getAddressId());
+                insertStmt.setObject(6, p.getAddressId() == 0 ? null : p.getAddressId());
                 if (insertStmt.executeUpdate() == 1) {
                     ResultSet key = insertStmt.getGeneratedKeys();
                     if (key.next())
@@ -49,7 +49,7 @@ public class People {
                 updateStmt.setString(2, p.getName());
                 updateStmt.setString(3, p.getForename());
                 updateStmt.setString(4, p.getLanguage());
-                updateStmt.setInt(5, p.getAddressId());
+                updateStmt.setObject(5, p.getAddressId() == 0 ? null : p.getAddressId());
                 updateStmt.setInt(6, p.getId());
                 if (updateStmt.executeUpdate() == 1)
                     return p.getId();

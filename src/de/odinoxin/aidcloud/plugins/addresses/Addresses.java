@@ -30,7 +30,7 @@ public class Addresses {
         try {
             if (adr.getId() == 0) {
                 PreparedStatement insertStmt = DBMgr.DB.prepareStatement("INSERT INTO Addresses VALUES (?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-                insertStmt.setInt(1, adr.getCountry());
+                insertStmt.setObject(1, adr.getCountry() == 0 ? null : adr.getCountry());
                 insertStmt.setString(2, adr.getZip());
                 insertStmt.setString(3, adr.getCity());
                 insertStmt.setString(4, adr.getStreet());
@@ -42,7 +42,7 @@ public class Addresses {
                 }
             } else {
                 PreparedStatement updateStmt = DBMgr.DB.prepareStatement("UPDATE Addresses SET Country = ?, Zip = ?, City = ?, Street = ?, HsNo = ? WHERE ID = ?");
-                updateStmt.setInt(1, adr.getCountry());
+                updateStmt.setObject(1, adr.getCountry() == 0 ? null : adr.getCountry());
                 updateStmt.setString(2, adr.getZip());
                 updateStmt.setString(3, adr.getCity());
                 updateStmt.setString(4, adr.getStreet());
