@@ -11,7 +11,7 @@ public class Login {
     @WebMethod
     public boolean checkLogin(int userId, String pwd) {
         try {
-            PreparedStatement statement = DBMgr.DB.prepareStatement("SELECT 'OK' FROM People WHERE ID = ? AND Pwd = ?");
+            PreparedStatement statement = DB.con.prepareStatement("SELECT 'OK' FROM People WHERE ID = ? AND Pwd = ?");
             statement.setInt(1, userId);
             statement.setString(2, pwd);
             ResultSet dbRes = statement.executeQuery();

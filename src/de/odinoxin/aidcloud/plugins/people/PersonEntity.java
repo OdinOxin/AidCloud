@@ -20,9 +20,9 @@ public class PersonEntity extends RecordItem {
     @XmlElement(name = "pwd")
     private String pwd;
     @XmlElement(name = "language")
-    private String language;
+    private int language;
     @XmlElement(name = "addressId")
-    private Integer addressId;
+    private int addressId;
 
     public PersonEntity() {
         super();
@@ -33,7 +33,7 @@ public class PersonEntity extends RecordItem {
         this.id = id;
     }
 
-    public PersonEntity(int id, String name, String forename, String code, String language, int addressId) {
+    public PersonEntity(int id, String name, String forename, String code, int language, int addressId) {
         this(id);
         this.name = name;
         this.forename = forename;
@@ -58,7 +58,7 @@ public class PersonEntity extends RecordItem {
         return pwd;
     }
 
-    public String getLanguage() {
+    public int getLanguage() {
         return language;
     }
 
@@ -82,7 +82,7 @@ public class PersonEntity extends RecordItem {
         this.pwd = pwd;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(int language) {
         this.language = language;
     }
 

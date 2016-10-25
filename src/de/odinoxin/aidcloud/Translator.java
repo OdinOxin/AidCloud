@@ -10,14 +10,22 @@ import java.sql.SQLException;
 @WebService
 public class Translator {
 
+    private static Translator instance;
+
+    public static Translator get() {
+        if (instance == null)
+            instance = new Translator();
+        return instance;
+    }
+
     @WebMethod
-    public String getTranslation(@WebParam(name = "text")String text, @WebParam(name = "language")String language) {
+    public String getTranslation(@WebParam(name = "text") String text, @WebParam(name = "language") String language) {
         try {
             if (text == null)
                 return null;
             if (language == null || language.isEmpty())
                 language = "USA";
-            PreparedStatement statement = DBMgr.DB.prepareStatement("SELECT " + language + " FROM Translations WHERE DEU LIKE ? OR USA LIKE ?");
+            PreparedStatement statement = DB.con.prepareStatement("SELECT " + language + " FROM Translations WHERE DEU LIKE ? OR USA LIKE ?");
             statement.setString(1, text);
             statement.setString(2, text);
             ResultSet dbRes = statement.executeQuery();

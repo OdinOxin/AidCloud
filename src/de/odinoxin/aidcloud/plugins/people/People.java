@@ -1,6 +1,6 @@
 package de.odinoxin.aidcloud.plugins.people;
 
-import de.odinoxin.aidcloud.DBMgr;
+import de.odinoxin.aidcloud.DB;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -14,13 +14,13 @@ import java.sql.Statement;
 public class People {
 
     @WebMethod
-    public PersonEntity getPerson(@WebParam(name = "personId") int personId) {
+    public PersonEntity getPerson(@WebParam(name = "id") int id) {
         try {
-            PreparedStatement statement = DBMgr.DB.prepareStatement("SELECT * FROM People WHERE ID = ?");
-            statement.setInt(1, personId);
+            PreparedStatement statement = DB.con.prepareStatement("SELECT * FROM People WHERE ID = ?");
+            statement.setInt(1, id);
             ResultSet dbRes = statement.executeQuery();
             if (dbRes.next())
-                return new PersonEntity(dbRes.getInt("ID"), dbRes.getString("Name"), dbRes.getString("Forename"), dbRes.getString("Code"), dbRes.getString("Language"), dbRes.getInt("Address"));
+                return new PersonEntity(dbRes.getInt("ID"), dbRes.getString("Name"), dbRes.getString("Forename"), dbRes.getString("Code"), dbRes.getInt("Language"), dbRes.getInt("Address"));
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -28,31 +28,31 @@ public class People {
     }
 
     @WebMethod
-    public int savePerson(@WebParam(name = "p") PersonEntity p) {
+    public int savePerson(@WebParam(name = "item") PersonEntity item) {
         try {
-            if (p.getId() == 0) {
-                PreparedStatement insertStmt = DBMgr.DB.prepareStatement("INSERT INTO People VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-                insertStmt.setString(1, p.getCode());
-                insertStmt.setString(2, p.getName());
-                insertStmt.setString(3, p.getForename());
-                insertStmt.setString(4, p.getPwd() == null ? "" : p.getPwd());
-                insertStmt.setString(5, p.getLanguage());
-                insertStmt.setObject(6, p.getAddressId() == 0 ? null : p.getAddressId());
+            if (item.getId() == 0) {
+                PreparedStatement insertStmt = DB.con.prepareStatement("INSERT INTO People VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+                insertStmt.setString(1, item.getCode());
+                insertStmt.setString(2, item.getName());
+                insertStmt.setString(3, item.getForename());
+                insertStmt.setString(4, item.getPwd() == null ? "" : item.getPwd());
+                insertStmt.setInt(5, item.getLanguage());
+                insertStmt.setObject(6, item.getAddressId() == 0 ? null : item.getAddressId());
                 if (insertStmt.executeUpdate() == 1) {
                     ResultSet key = insertStmt.getGeneratedKeys();
                     if (key.next())
                         return key.getInt(1);
                 }
             } else {
-                PreparedStatement updateStmt = DBMgr.DB.prepareStatement("UPDATE People SET Code = ?, Name = ?, Forename = ?, Language = ?, Address = ? WHERE ID = ?");
-                updateStmt.setString(1, p.getCode());
-                updateStmt.setString(2, p.getName());
-                updateStmt.setString(3, p.getForename());
-                updateStmt.setString(4, p.getLanguage());
-                updateStmt.setObject(5, p.getAddressId() == 0 ? null : p.getAddressId());
-                updateStmt.setInt(6, p.getId());
+                PreparedStatement updateStmt = DB.con.prepareStatement("UPDATE People SET Code = ?, Name = ?, Forename = ?, Language = ?, Address = ? WHERE ID = ?");
+                updateStmt.setString(1, item.getCode());
+                updateStmt.setString(2, item.getName());
+                updateStmt.setString(3, item.getForename());
+                updateStmt.setInt(4, item.getLanguage());
+                updateStmt.setObject(5, item.getAddressId() == 0 ? null : item.getAddressId());
+                updateStmt.setInt(6, item.getId());
                 if (updateStmt.executeUpdate() == 1)
-                    return p.getId();
+                    return item.getId();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -61,10 +61,10 @@ public class People {
     }
 
     @WebMethod
-    public boolean deletePerson(@WebParam(name = "personId") int personId) {
+    public boolean deletePerson(@WebParam(name = "id") int id) {
         try {
-            PreparedStatement deleteStmt = DBMgr.DB.prepareStatement("DELETE FROM People WHERE ID = ?");
-            deleteStmt.setInt(1, personId);
+            PreparedStatement deleteStmt = DB.con.prepareStatement("DELETE FROM People WHERE ID = ?");
+            deleteStmt.setInt(1, id);
             return deleteStmt.executeUpdate() == 1;
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -73,13 +73,13 @@ public class People {
     }
 
     @WebMethod
-    public boolean changePwd(@WebParam(name = "personId") int personId, @WebParam(name = "oldPwd") String oldPwd, @WebParam(name = "newPwd") String newPwd) {
-        if (personId == 0)
+    public boolean changePwd(@WebParam(name = "id") int id, @WebParam(name = "oldPwd") String oldPwd, @WebParam(name = "newPwd") String newPwd) {
+        if (id == 0)
             return false;
         try {
-            PreparedStatement pwdStmt = DBMgr.DB.prepareStatement("UPDATE People SET Pwd = ? WHERE ID = ? AND Pwd = ?");
+            PreparedStatement pwdStmt = DB.con.prepareStatement("UPDATE People SET Pwd = ? WHERE ID = ? AND Pwd = ?");
             pwdStmt.setString(1, newPwd);
-            pwdStmt.setInt(2, personId);
+            pwdStmt.setInt(2, id);
             pwdStmt.setString(3, oldPwd);
             return pwdStmt.executeUpdate() == 1;
         } catch (SQLException ex) {
