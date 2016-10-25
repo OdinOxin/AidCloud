@@ -25,9 +25,8 @@ public class Translator {
                 return null;
             if (language == null || language.isEmpty())
                 language = "USA";
-            PreparedStatement statement = DB.con.prepareStatement("SELECT " + language + " FROM Translations WHERE DEU LIKE ? OR USA LIKE ?");
+            PreparedStatement statement = DB.con.prepareStatement("SELECT " + language + " FROM Translations WHERE SYS LIKE ?");
             statement.setString(1, text);
-            statement.setString(2, text);
             ResultSet dbRes = statement.executeQuery();
             if (dbRes.next()) {
                 //return dbRes.getString(1);
