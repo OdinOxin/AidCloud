@@ -1,0 +1,32 @@
+﻿DROP TABLE Plugins
+CREATE TABLE Plugins
+(
+	ID INT IDENTITY(1, 1) PRIMARY KEY,
+	Name VARCHAR(50) NOT NULL UNIQUE,
+)
+
+DROP TABLE RefBoxViews
+CREATE TABLE RefBoxViews
+(
+	ID INT IDENTITY(1,1) PRIMARY KEY,
+	Name VARCHAR(50) UNIQUE,
+	ViewName VARCHAR(50) UNIQUE,
+)
+
+DROP TABLE Country
+SELECT * FROM Country
+
+DROP TABLE Address
+SELECT * FROM Address
+
+DROP TABLE Person
+SELECT * FROM Person
+
+DROP TABLE ContactType
+SELECT * FROM ContactType
+
+DROP TABLE ContactInformation
+SELECT * FROM ContactInformation
+
+DROP TABLE Language
+SELECT * FROM Language

@@ -1,7 +1,9 @@
 package de.odinoxin.aidcloud.plugins.countries;
 
-import de.odinoxin.aidcloud.plugins.RecordItem;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,8 +11,14 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CountryEntity")
-public class CountryEntity extends RecordItem {
+@Entity
+@Table(name = "Country")
+public class Country {
 
+    @Id
+    @GeneratedValue
+    @XmlElement(name = "id")
+    private int id;
     @XmlElement(name = "alpha2")
     private String alpha2;
     @XmlElement(name = "alpha3")
@@ -20,21 +28,25 @@ public class CountryEntity extends RecordItem {
     @XmlElement(name = "areaCode")
     private String areaCode;
 
-    public CountryEntity() {
-        super();
+    public Country() {
+
     }
 
-    public CountryEntity(int id) {
+    public Country(int id) {
         this();
         this.id = id;
     }
 
-    public CountryEntity(int id, String alpha2, String alpha3, String name, String areaCode) {
+    public Country(int id, String alpha2, String alpha3, String name, String areaCode) {
         this(id);
         this.alpha2 = alpha2;
         this.alpha3 = alpha3;
         this.name = name;
         this.areaCode = areaCode;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getAlpha2() {
@@ -51,6 +63,10 @@ public class CountryEntity extends RecordItem {
 
     public String getAreaCode() {
         return areaCode;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setAlpha2(String alpha2) {

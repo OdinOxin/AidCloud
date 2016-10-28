@@ -1,7 +1,8 @@
 package de.odinoxin.aidcloud.plugins.addresses;
 
-import de.odinoxin.aidcloud.plugins.RecordItem;
+import de.odinoxin.aidcloud.plugins.countries.Country;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,8 +10,14 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AddressEntity")
-public class AddressEntity extends RecordItem {
+@Entity
+@Table(name = "Address")
+public class Address {
 
+    @Id
+    @GeneratedValue
+    @XmlElement(name = "id")
+    private int id;
     @XmlElement(name = "street")
     private String street;
     @XmlElement(name = "hsNo")
@@ -19,24 +26,30 @@ public class AddressEntity extends RecordItem {
     private String zip;
     @XmlElement(name = "city")
     private String city;
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @XmlElement(name = "country")
-    private int country;
+    private Country country;
 
-    public AddressEntity() {
-        super();
+    public Address() {
+
     }
 
-    public AddressEntity(int id) {
-        super(id);
+    public Address(int id) {
+        this();
+        this.id = id;
     }
 
-    public AddressEntity(int id, String street, String hsNo, String zip, String city, int country) {
+    public Address(int id, String street, String hsNo, String zip, String city, Country country) {
         this(id);
         this.street = street;
         this.hsNo = hsNo;
         this.zip = zip;
         this.city = city;
         this.country = country;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getStreet() {
@@ -55,8 +68,12 @@ public class AddressEntity extends RecordItem {
         return city;
     }
 
-    public int getCountry() {
+    public Country getCountry() {
         return country;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setStreet(String street) {
@@ -75,7 +92,7 @@ public class AddressEntity extends RecordItem {
         this.city = city;
     }
 
-    public void setCountry(int country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 }

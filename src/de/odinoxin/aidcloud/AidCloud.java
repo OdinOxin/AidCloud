@@ -1,12 +1,11 @@
 package de.odinoxin.aidcloud;
 
-import de.odinoxin.aidcloud.plugins.addresses.Addresses;
-import de.odinoxin.aidcloud.plugins.contact.information.ContactInformation;
-import de.odinoxin.aidcloud.plugins.contact.types.ContactTypes;
-import de.odinoxin.aidcloud.plugins.countries.Countries;
-import de.odinoxin.aidcloud.plugins.languages.Languages;
-import de.odinoxin.aidcloud.plugins.people.People;
-import de.odinoxin.aidcloud.refbox.RefBox;
+import de.odinoxin.aidcloud.plugins.addresses.AddressProvider;
+import de.odinoxin.aidcloud.plugins.contact.information.ContactInformationProvider;
+import de.odinoxin.aidcloud.plugins.contact.types.ContactTypeProvider;
+import de.odinoxin.aidcloud.plugins.countries.CountryProvider;
+import de.odinoxin.aidcloud.plugins.languages.LanguageProvider;
+import de.odinoxin.aidcloud.plugins.people.PersonProvider;
 
 import javax.xml.ws.Endpoint;
 
@@ -15,14 +14,13 @@ public class AidCloud {
 
     public static void main(String[] args) {
         Endpoint.publish(AidCloud.ADDRESS + "/Login", new Login());
-        Endpoint.publish(AidCloud.ADDRESS + "/Languages", new Languages());
+        Endpoint.publish(AidCloud.ADDRESS + "/LanguageProvider", new LanguageProvider());
         Endpoint.publish(AidCloud.ADDRESS + "/Translator", new Translator());
-        Endpoint.publish(AidCloud.ADDRESS + "/RefBox", new RefBox());
-        Endpoint.publish(AidCloud.ADDRESS + "/People", new People());
-        Endpoint.publish(AidCloud.ADDRESS + "/Addresses", new Addresses());
-        Endpoint.publish(AidCloud.ADDRESS + "/Countries", new Countries());
-        Endpoint.publish(AidCloud.ADDRESS + "/ContactTypes", new ContactTypes());
-        Endpoint.publish(AidCloud.ADDRESS + "/ContactInformation", new ContactInformation());
+        Endpoint.publish(AidCloud.ADDRESS + "/PersonProvider", new PersonProvider());
+        Endpoint.publish(AidCloud.ADDRESS + "/AddressProvider", new AddressProvider());
+        Endpoint.publish(AidCloud.ADDRESS + "/CountryProvider", new CountryProvider());
+        Endpoint.publish(AidCloud.ADDRESS + "/ContactTypeProvider", new ContactTypeProvider());
+        Endpoint.publish(AidCloud.ADDRESS + "/ContactInformationProvider", new ContactInformationProvider());
 
         System.out.println("AidCloud is online now!");
     }

@@ -1,68 +1,65 @@
 package de.odinoxin.aidcloud.plugins.contact.information;
 
-import de.odinoxin.aidcloud.DB;
+import de.odinoxin.aidcloud.plugins.contact.types.ContactType;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 
-@WebService
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "ContactInformationEntity")
+@Entity
+@Table(name = "ContactInformation")
 public class ContactInformation {
-    private static final String TABLE = "ContactInformation";
 
-    @WebMethod
-    public ContactInformationEntity getContactInformation(@WebParam(name = "id") int id) {
-        try {
-            PreparedStatement statement = DB.con.prepareStatement("SELECT * FROM " + TABLE + " WHERE ID = ?");
-            statement.setInt(1, id);
-            ResultSet dbRes = statement.executeQuery();
-            if (dbRes.next())
-                return new ContactInformationEntity(dbRes.getInt("ID"), dbRes.getInt("ContactType"), dbRes.getString("Information"));
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return null;
+    @Id
+    @GeneratedValue
+    @XmlElement(name = "id")
+    private int id;
+    @XmlElement(name = "contactType")
+    @OneToOne
+    private ContactType contactType;
+    @XmlElement(name = "information")
+    private String information;
+
+    public ContactInformation() {
+
     }
 
-    @WebMethod
-    public int saveContactInformation(@WebParam(name = "item") ContactInformationEntity item) {
-        try {
-            if (item.getId() == 0) {
-                PreparedStatement insertStmt = DB.con.prepareStatement("INSERT INTO " + TABLE + " VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
-                insertStmt.setInt(1, item.getContactType());
-                insertStmt.setString(2, item.getInformation());
-                if (insertStmt.executeUpdate() == 1) {
-                    ResultSet key = insertStmt.getGeneratedKeys();
-                    if (key.next())
-                        return key.getInt(1);
-                }
-            } else {
-                PreparedStatement updateStmt = DB.con.prepareStatement("UPDATE " + TABLE + " SET ContactType = ?, Information = ? WHERE ID = ?");
-                updateStmt.setInt(1, item.getContactType());
-                updateStmt.setString(2, item.getInformation());
-                updateStmt.setInt(3, item.getId());
-                if (updateStmt.executeUpdate() == 1)
-                    return item.getId();
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
+    public ContactInformation(int id) {
+        this();
+        this.id = id;
     }
 
-    @WebMethod
-    public boolean deleteContactInformation(@WebParam(name = "id") int id) {
-        try {
-            PreparedStatement deleteStmt = DB.con.prepareStatement("DELETE FROM " + TABLE + " WHERE ID = ?");
-            deleteStmt.setInt(1, id);
-            return deleteStmt.executeUpdate() == 1;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return false;
+    public ContactInformation(int id, ContactType contactType, String information) {
+        this(id);
+        this.contactType = contactType;
+        this.information = information;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public ContactType getContactType() {
+        return contactType;
+    }
+
+    public String getInformation() {
+        return information;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setContactType(ContactType contactType) {
+        this.contactType = contactType;
+    }
+
+    public void setInformation(String information) {
+        this.information = information;
     }
 }

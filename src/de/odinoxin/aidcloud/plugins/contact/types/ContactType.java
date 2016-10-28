@@ -1,7 +1,9 @@
 package de.odinoxin.aidcloud.plugins.contact.types;
 
-import de.odinoxin.aidcloud.plugins.RecordItem;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -9,8 +11,14 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContactTypeEntity")
-public class ContactTypeEntity extends RecordItem {
+@Entity
+@Table(name = "ContactType")
+public class ContactType {
 
+    @Id
+    @GeneratedValue
+    @XmlElement(name = "id")
+    private int id;
     @XmlElement(name = "name")
     private String name;
     @XmlElement(name = "code")
@@ -18,19 +26,24 @@ public class ContactTypeEntity extends RecordItem {
     @XmlElement(name = "regex")
     private String regex;
 
-    public ContactTypeEntity() {
-        super();
+    public ContactType() {
+
     }
 
-    public ContactTypeEntity(int id) {
-        super(id);
+    public ContactType(int id) {
+        this();
+        this.id = id;
     }
 
-    public ContactTypeEntity(int id, String name, String code, String regex) {
+    public ContactType(int id, String name, String code, String regex) {
         this(id);
         this.name = name;
         this.code = code;
         this.regex = regex;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -43,6 +56,10 @@ public class ContactTypeEntity extends RecordItem {
 
     public String getRegex() {
         return regex;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setName(String name) {
