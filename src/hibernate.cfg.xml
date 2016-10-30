@@ -22,6 +22,7 @@
         <property name="hbm2ddl.auto">create</property>
 
         <!-- Names the annotated entity class -->
+        <mapping class="de.odinoxin.aidcloud.translation.Translation"/>
         <mapping class="de.odinoxin.aidcloud.plugins.addresses.Address"/>
         <mapping class="de.odinoxin.aidcloud.plugins.contact.information.ContactInformation"/>
         <mapping class="de.odinoxin.aidcloud.plugins.contact.types.ContactType"/>

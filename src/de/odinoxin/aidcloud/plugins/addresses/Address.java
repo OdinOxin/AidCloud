@@ -52,44 +52,44 @@ public class Address {
         return id;
     }
 
-    public String getStreet() {
-        return street;
-    }
-
-    public String getHsNo() {
-        return hsNo;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getStreet() {
+        return street;
     }
 
     public void setStreet(String street) {
         this.street = street;
     }
 
+    public String getHsNo() {
+        return hsNo;
+    }
+
     public void setHsNo(String hsNo) {
         this.hsNo = hsNo;
+    }
+
+    public String getZip() {
+        return zip;
     }
 
     public void setZip(String zip) {
         this.zip = zip;
     }
 
+    public String getCity() {
+        return city;
+    }
+
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Country getCountry() {
+        return country;
     }
 
     public void setCountry(Country country) {

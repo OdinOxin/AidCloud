@@ -22,8 +22,7 @@ public class DB {
         }
     }
 
-    public static Session open()
-    {
+    public static Session open() {
         return DB.sessionFactory.openSession();
     }
 }

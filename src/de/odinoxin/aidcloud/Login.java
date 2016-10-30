@@ -6,7 +6,8 @@ import org.hibernate.Session;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @WebService
 public class Login {
-    @WebMethod(action = "checkLogin")
+    @WebMethod
     public boolean checkLogin(int userId, String pwd) {
         try {
             PreparedStatement statement = DB.con.prepareStatement("SELECT 'OK' FROM Person WHERE ID = ? AND Pwd LIKE ?");
@@ -30,18 +31,30 @@ public class Login {
         return false;
     }
 
-    @WebMethod(action = "searchLogin")
+    @WebMethod
     public List<Person> searchLogin(@WebParam(name = "expr") String[] expr) {
         Session session = DB.open();
         List<Person> result = new ArrayList<>();
-        if (expr != null && expr.length > 0)
-            for (int i = 0; i < expr.length; i++) {
-                Query q = session.createQuery("FROM Person WHERE id LIKE :expr OR name LIKE :expr OR forename LIKE :expr OR code LIKE :expr");
-                q.setParameter("expr", expr);
-                result.addAll(q.getResultList());
-            }
-        else
-            result.addAll(session.createQuery("FROM Person").getResultList());
+        if (expr != null && expr.length > 0) {
+            for (int i = 0; i < expr.length; i++)
+                expr[i] = expr[i].toLowerCase();
+
+            CriteriaQuery<Person> criteria = session.getEntityManagerFactory().getCriteriaBuilder().createQuery(Person.class);
+            Root<Person> root = criteria.from(Person.class);
+            criteria.select(root);
+
+            result.addAll(session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList());
+
+//            Query q = session.createQuery("FROM Person WHERE LOWER(name) IN(:expr) OR LOWER(forename) IN(:expr) OR LOWER(code) IN(:expr)");
+//            q.setParameter("expr", Arrays.asList(expr));
+//            List<Person> tmpList = (List<Person>) q.getResultList();
+//            for (Person tmp : tmpList)
+//                result.add(new Person(tmp.getId(), tmp.getName(), tmp.getForename(), tmp.getCode(), tmp.getLanguage(), tmp.getAddress(), tmp.getContactInformation()));
+        } else {
+            List<Person> tmpList = (List<Person>) session.createQuery("FROM Person").getResultList();
+            for (Person tmp : tmpList)
+                result.add(new Person(tmp.getId(), tmp.getName(), tmp.getForename(), tmp.getCode(), tmp.getLanguage(), tmp.getAddress(), tmp.getContactInformation()));
+        }
         session.close();
         return result;
     }

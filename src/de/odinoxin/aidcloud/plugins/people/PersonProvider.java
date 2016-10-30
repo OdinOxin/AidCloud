@@ -41,7 +41,7 @@ public class PersonProvider extends RecordHandler<Person> {
             return null;
         Session session = DB.open();
         List<Person> result = new ArrayList<>();
-        for (int i = 0; i < expr.length; i++) { //Very naiv!
+        for (int i = 0; i < expr.length; i++) { //Very naiv, cause of duplicates!
             Query q = session.createQuery("FROM Person WHERE id LIKE :expr OR name LIKE :expr OR forename LIKE :expr OR code LIKE :expr");
             q.setParameter("expr", expr[i]);
             result.addAll(q.getResultList());

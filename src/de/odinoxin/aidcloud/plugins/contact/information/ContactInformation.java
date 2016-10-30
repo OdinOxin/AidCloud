@@ -43,20 +43,20 @@ public class ContactInformation {
         return id;
     }
 
-    public ContactType getContactType() {
-        return contactType;
-    }
-
-    public String getInformation() {
-        return information;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
 
+    public ContactType getContactType() {
+        return contactType;
+    }
+
     public void setContactType(ContactType contactType) {
         this.contactType = contactType;
+    }
+
+    public String getInformation() {
+        return information;
     }
 
     public void setInformation(String information) {
