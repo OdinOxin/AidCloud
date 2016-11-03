@@ -1,5 +1,7 @@
 package de.odinoxin.aidcloud.plugins.countries;
 
+import de.odinoxin.aidcloud.plugins.Recordable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "CountryEntity")
 @Entity
 @Table(name = "Country")
-public class Country {
+public class Country implements Recordable {
 
     @Id
     @GeneratedValue
@@ -45,10 +47,12 @@ public class Country {
         this.areaCode = areaCode;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

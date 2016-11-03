@@ -1,5 +1,7 @@
 package de.odinoxin.aidcloud.plugins.contact.types;
 
+import de.odinoxin.aidcloud.plugins.Recordable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ContactTypeEntity")
 @Entity
 @Table(name = "ContactType")
-public class ContactType {
+public class ContactType implements Recordable {
 
     @Id
     @GeneratedValue
@@ -42,10 +44,12 @@ public class ContactType {
         this.regex = regex;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

@@ -39,23 +39,22 @@ public class Login {
     public List<Person> searchLogin(@WebParam(name = "expr") String[] expr) {
         Session session = DB.open();
         List<Person> result = new ArrayList<>();
-        List<Person> tmpList;
+        CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
+        CriteriaQuery<Person> criteria = builder.createQuery(Person.class);
+        Predicate predicates = builder.conjunction();
+        Root<Person> root = criteria.from(Person.class);
         if (expr != null && expr.length > 0) {
             for (int i = 0; i < expr.length; i++)
                 expr[i] = "%" + expr[i].toLowerCase() + "%";
-            CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
-            CriteriaQuery<Person> criteria = builder.createQuery(Person.class);
-            Root<Person> root = criteria.from(Person.class);
-            Predicate predicates = builder.disjunction();
+            predicates = builder.disjunction();
             for (int i = 0; i < expr.length; i++) {
                 predicates = builder.or(predicates, builder.like(builder.lower(root.get(Person_.forename)), expr[i]));
                 predicates = builder.or(predicates, builder.like(builder.lower(root.get(Person_.name)), expr[i]));
                 predicates = builder.or(predicates, builder.like(builder.lower(root.get(Person_.code)), expr[i]));
             }
-            criteria.where(predicates);
-            tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
-        } else
-            tmpList = (List<Person>) session.createQuery("FROM Person").getResultList();
+        }
+        criteria.where(predicates);
+        List<Person> tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
         if (tmpList != null)
             for (Person tmp : tmpList)
                 result.add(new Person(tmp.getId(), tmp.getName(), tmp.getForename(), tmp.getCode(), tmp.getLanguage(), tmp.getAddress(), tmp.getContactInformation()));

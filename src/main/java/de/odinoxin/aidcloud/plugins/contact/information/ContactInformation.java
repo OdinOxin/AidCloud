@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.contact.information;
 
+import de.odinoxin.aidcloud.plugins.Recordable;
 import de.odinoxin.aidcloud.plugins.contact.types.ContactType;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ContactInformationEntity")
 @Entity
 @Table(name = "ContactInformation")
-public class ContactInformation {
+public class ContactInformation implements Recordable {
 
     @Id
     @GeneratedValue
@@ -39,10 +40,12 @@ public class ContactInformation {
         this.information = information;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

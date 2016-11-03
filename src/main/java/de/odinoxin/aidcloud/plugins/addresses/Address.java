@@ -1,6 +1,8 @@
 package de.odinoxin.aidcloud.plugins.addresses;
 
+import de.odinoxin.aidcloud.plugins.Recordable;
 import de.odinoxin.aidcloud.plugins.countries.Country;
+import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -12,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "AddressEntity")
 @Entity
 @Table(name = "Address")
-public class Address {
+public class Address implements Recordable {
 
     @Id
     @GeneratedValue
@@ -48,10 +50,12 @@ public class Address {
         this.country = country;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }
