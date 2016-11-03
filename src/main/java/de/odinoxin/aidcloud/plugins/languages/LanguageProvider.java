@@ -5,6 +5,10 @@ import de.odinoxin.aidcloud.plugins.RecordHandler;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebService
 public class LanguageProvider extends RecordHandler<Language> {
@@ -16,11 +20,24 @@ public class LanguageProvider extends RecordHandler<Language> {
 
     @WebMethod
     public Language saveLanguage(@WebParam(name = "entity") Language entity) {
-        return super.save(entity);
+        return this.getLanguage(super.save(entity));
     }
 
     @WebMethod
     public boolean deleteLanguage(@WebParam(name = "id") int id) {
         return super.delete(id);
+    }
+
+    @WebMethod
+    public List<Language> searchLanguage(@WebParam(name = "expr") String[] expr) {
+        return super.search(expr);
+    }
+
+    @Override
+    protected List<Expression<String>> getSearchExpressions(Root<Language> root) {
+        List<Expression<String>> expressions = new ArrayList<>();
+        expressions.add(root.get(Language_.name));
+        expressions.add(root.get(Language_.code));
+        return expressions;
     }
 }

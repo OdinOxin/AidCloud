@@ -2,12 +2,20 @@ package de.odinoxin.aidcloud.plugins.people;
 
 import de.odinoxin.aidcloud.DB;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
+import de.odinoxin.aidcloud.plugins.addresses.Address;
+import de.odinoxin.aidcloud.plugins.addresses.Address_;
+import de.odinoxin.aidcloud.plugins.countries.Country;
+import de.odinoxin.aidcloud.plugins.countries.Country_;
 import org.hibernate.Session;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.persistence.Query;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +35,7 @@ public class PersonProvider extends RecordHandler<Person> {
         Person current = this.get(entity.getId());
         if (current != null)
             entity.setPwd(current.getPwd());
-        return super.save(entity);
+        return this.getPerson(super.save(entity));
     }
 
     @WebMethod
@@ -37,16 +45,7 @@ public class PersonProvider extends RecordHandler<Person> {
 
     @WebMethod
     public List<Person> searchPerson(@WebParam(name = "expr") String[] expr) {
-        if (expr == null || expr.length <= 0)
-            return null;
-        Session session = DB.open();
-        List<Person> result = new ArrayList<>();
-        for (int i = 0; i < expr.length; i++) { //Very naiv, cause of duplicates!
-            Query q = session.createQuery("FROM Person WHERE id LIKE :expr OR name LIKE :expr OR forename LIKE :expr OR code LIKE :expr");
-            q.setParameter("expr", expr[i]);
-            result.addAll(q.getResultList());
-        }
-        return result;
+        return super.search(expr);
     }
 
     @WebMethod
@@ -66,13 +65,23 @@ public class PersonProvider extends RecordHandler<Person> {
     }
 
     @Override
+    protected List<Expression<String>> getSearchExpressions(Root<Person> root) {
+        List<Expression<String>> expressions = new ArrayList<>();
+        Join<Person, Address> joinAddress = root.join(Person_.address, JoinType.LEFT);
+        Join<Address, Country> joinCountry = joinAddress.join(Address_.country, JoinType.LEFT);
+        expressions.add(root.get(Person_.forename));
+        expressions.add(root.get(Person_.name));
+        expressions.add(root.get(Person_.code));
+        expressions.add(joinAddress.get(Address_.street));
+        expressions.add(joinAddress.get(Address_.hsNo));
+        expressions.add(joinAddress.get(Address_.zip));
+        expressions.add(joinCountry.get(Country_.name));
+        return expressions;
+    }
+
+    @Override
     public void generateDefaults() {
-        Session session = DB.open();
-        Query qAdmin = session.createQuery("SELECT 'Admin' FROM Person WHERE Name LIKE :Name");
-        qAdmin.setParameter("Name", "Admin");
-        boolean exists = qAdmin.getResultList().size() >= 1;
-        session.close();
-        if (!exists) {
+        if (!this.anyRecords()) {
             Person admin = new Person();
             admin.setName("Admin");
             admin.setForename("AidDesk");
@@ -90,25 +99,5 @@ public class PersonProvider extends RecordHandler<Person> {
             carsten.setName("Carsten");
             this.save(carsten);
         }
-//        { // V_Login
-//            session = DB.open();
-//            session.beginTransaction();
-//            Query qDrop = session.createNativeQuery("DROP VIEW V_Login");
-//            qDrop.executeUpdate();
-//            Query qCreate = session.createNativeQuery("CREATE VIEW V_Login AS SELECT ID, Forename + ' ' + Name AS Text, Code AS SubText FROM Person");
-//            qCreate.executeUpdate();
-//            session.getTransaction().commit();
-//            session.close();
-//        }
-//        { // V_Person
-//            session = DB.open();
-//            session.beginTransaction();
-//            Query qDrop = session.createNativeQuery("DROP VIEW V_Person");
-//            qDrop.executeUpdate();
-//            Query qCreate = session.createNativeQuery("CREATE VIEW V_Person AS SELECT P.ID AS ID, '' AS Text, '' AS SubText FROM Person");
-//            qCreate.executeUpdate();
-//            session.getTransaction().commit();
-//            session.close();
-//        }
     }
 }

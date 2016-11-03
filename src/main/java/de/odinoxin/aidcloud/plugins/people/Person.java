@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.people;
 
+import de.odinoxin.aidcloud.plugins.Recordable;
 import de.odinoxin.aidcloud.plugins.addresses.Address;
 import de.odinoxin.aidcloud.plugins.contact.information.ContactInformation;
 import de.odinoxin.aidcloud.plugins.languages.Language;
@@ -17,7 +18,7 @@ import java.util.List;
 @XmlType(name = "PersonEntity")
 @Entity
 @Table(name = "Person")
-public class Person {
+public class Person implements Recordable {
 
     @Id
     @GeneratedValue
@@ -67,10 +68,12 @@ public class Person {
         this.contactInformation = contactInformation;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }

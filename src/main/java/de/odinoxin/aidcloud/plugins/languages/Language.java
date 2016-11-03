@@ -1,5 +1,7 @@
 package de.odinoxin.aidcloud.plugins.languages;
 
+import de.odinoxin.aidcloud.plugins.Recordable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -13,7 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "LanguageEntity")
 @Entity
 @Table(name = "Language")
-public class Language {
+public class Language implements Recordable {
 
     @Id
     @GeneratedValue
@@ -39,10 +41,12 @@ public class Language {
         this.code = code;
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }
