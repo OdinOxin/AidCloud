@@ -45,6 +45,11 @@ public class ContactType implements Recordable {
     }
 
     @Override
+    public Object clone() {
+        return new ContactType(this.getId(), this.getName(), this.getCode(), this.getRegex());
+    }
+
+    @Override
     public int getId() {
         return id;
     }

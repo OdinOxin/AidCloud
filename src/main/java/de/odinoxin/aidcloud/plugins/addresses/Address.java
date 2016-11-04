@@ -51,6 +51,11 @@ public class Address implements Recordable {
     }
 
     @Override
+    public Object clone() {
+        return new Address(this.getId(), this.getStreet(), this.getHsNo(), this.getZip(), this.getCity(), this.getCountry());
+    }
+
+    @Override
     public int getId() {
         return id;
     }

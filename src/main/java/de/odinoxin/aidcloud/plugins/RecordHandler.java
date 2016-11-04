@@ -4,9 +4,12 @@ import de.odinoxin.aidcloud.DB;
 import de.odinoxin.aidcloud.Provider;
 import org.hibernate.Session;
 
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class RecordHandler<T extends Recordable> extends Provider {
 
@@ -43,24 +46,29 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return true;
     }
 
-    protected List<T> search(String[] expr) {
+    protected List<T> search(String[] expressions) {
         Session session = DB.open();
         CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
         CriteriaQuery<T> criteria = builder.createQuery((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
         Predicate predicates = builder.conjunction();
         Root<T> root = criteria.from((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
-        if (expr != null && expr.length > 0) {
-            for (int i = 0; i < expr.length; i++)
-                expr[i] = "%" + expr[i].toLowerCase() + "%";
+        if (expressions != null && expressions.length > 0) {
+            for (int i = 0; i < expressions.length; i++)
+                expressions[i] = "%" + expressions[i].toLowerCase() + "%";
             predicates = builder.disjunction();
-            List<Expression<String>> expressions = getSearchExpressions(root);
-            if (expressions != null)
-                for (int i = 0; i < expr.length; i++)
-                    for (int j = 0; j < expressions.size(); j++)
-                        predicates = builder.or(predicates, builder.like(builder.lower(expressions.get(j)), expr[i]));
+            List<Expression<String>> dbExpressions = getSearchExpressions(root);
+            if (dbExpressions != null)
+                for (String expr : expressions)
+                    for (Expression<String> dbExpr : dbExpressions)
+                        predicates = builder.or(predicates, builder.like(builder.lower(dbExpr), expr));
         }
         criteria.where(predicates);
-        List<T> result = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
+        EntityManager em = session.getEntityManagerFactory().createEntityManager();
+        List<T> tmpList = em.createQuery(criteria).getResultList();
+        List<T> result = new ArrayList<>();
+        for (T tmp : tmpList)
+            result.add((T) tmp.clone());
+        em.close();
         session.close();
         return result;
     }

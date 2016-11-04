@@ -42,6 +42,11 @@ public class Language implements Recordable {
     }
 
     @Override
+    public Object clone() {
+        return new Language(this.getId(), this.getName(), this.getCode());
+    }
+
+    @Override
     public int getId() {
         return id;
     }

@@ -48,6 +48,11 @@ public class Country implements Recordable {
     }
 
     @Override
+    public Object clone() {
+        return new Country(this.getId(), this.getAlpha2(), this.getAlpha3(), this.getName(), this.getAreaCode());
+    }
+
+    @Override
     public int getId() {
         return id;
     }

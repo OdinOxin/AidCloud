@@ -69,6 +69,11 @@ public class Person implements Recordable {
     }
 
     @Override
+    public Object clone() {
+        return new Person(this.getId(), this.getName(), this.getForename(), this.getCode(), this.getLanguage(), this.getAddress(), this.getContactInformation());
+    }
+
+    @Override
     public int getId() {
         return id;
     }
