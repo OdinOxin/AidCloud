@@ -2,7 +2,7 @@ package de.odinoxin.aidcloud.plugins.addresses;
 
 import de.odinoxin.aidcloud.plugins.Recordable;
 import de.odinoxin.aidcloud.plugins.countries.Country;
-import org.hibernate.annotations.Fetch;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -98,7 +98,9 @@ public class Address implements Recordable {
     }
 
     public Country getCountry() {
-        return country;
+        if (Hibernate.isInitialized(country))
+            return country;
+        return null;
     }
 
     public void setCountry(Country country) {

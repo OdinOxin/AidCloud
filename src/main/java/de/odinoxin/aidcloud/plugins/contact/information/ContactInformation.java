@@ -2,6 +2,7 @@ package de.odinoxin.aidcloud.plugins.contact.information;
 
 import de.odinoxin.aidcloud.plugins.Recordable;
 import de.odinoxin.aidcloud.plugins.contact.types.ContactType;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -56,7 +57,9 @@ public class ContactInformation implements Recordable {
     }
 
     public ContactType getContactType() {
-        return contactType;
+        if (Hibernate.isInitialized(contactType))
+            return contactType;
+        return null;
     }
 
     public void setContactType(ContactType contactType) {

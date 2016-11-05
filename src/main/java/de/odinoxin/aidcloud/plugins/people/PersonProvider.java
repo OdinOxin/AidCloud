@@ -25,8 +25,11 @@ public class PersonProvider extends RecordHandler<Person> {
     @WebMethod
     public Person getPerson(@WebParam(name = "id") int id) {
         Person p = super.get(id);
-        if (p != null)
+        if (p != null) {
+            if (p.getContactInformation() == null || p.getContactInformation().isEmpty())
+                p.setContactInformation(null);
             p.setPwd(null);
+        }
         return p;
     }
 
@@ -83,21 +86,11 @@ public class PersonProvider extends RecordHandler<Person> {
     public void generateDefaults() {
         if (!this.anyRecords()) {
             Person admin = new Person();
-            admin.setName("Admin");
             admin.setForename("AidDesk");
+            admin.setName("Admin");
             admin.setCode("ADMIN");
             admin.setPwd("AidDesk");
             this.save(admin);
-
-            Person armin = new Person();
-            armin.setName("Armin");
-            this.save(armin);
-            Person bob = new Person();
-            bob.setName("Bob");
-            this.save(bob);
-            Person carsten = new Person();
-            carsten.setName("Carsten");
-            this.save(carsten);
         }
     }
 }

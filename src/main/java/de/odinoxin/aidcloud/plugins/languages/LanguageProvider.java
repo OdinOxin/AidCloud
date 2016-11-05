@@ -40,4 +40,18 @@ public class LanguageProvider extends RecordHandler<Language> {
         expressions.add(root.get(Language_.code));
         return expressions;
     }
+
+    @Override
+    public void generateDefaults() {
+        if (!this.anyRecords()) {
+            Language german = new Language();
+            german.setName("Deutsch");
+            german.setCode("DEU");
+            this.saveLanguage(german);
+            Language english = new Language();
+            english.setName("English");
+            english.setCode("USA");
+            this.saveLanguage(english);
+        }
+    }
 }

@@ -9,7 +9,6 @@ import javax.persistence.criteria.*;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class RecordHandler<T extends Recordable> extends Provider {
 
@@ -38,9 +37,10 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
     }
 
     protected boolean delete(int id) {
+        T entity = this.get(id);
         Session session = DB.open();
         session.beginTransaction();
-        session.delete(this.get(id));
+        session.delete(entity);
         session.getTransaction().commit();
         session.close();
         return true;
