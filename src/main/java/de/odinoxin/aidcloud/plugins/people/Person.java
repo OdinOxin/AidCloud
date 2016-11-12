@@ -5,6 +5,9 @@ import de.odinoxin.aidcloud.plugins.addresses.Address;
 import de.odinoxin.aidcloud.plugins.contact.information.ContactInformation;
 import de.odinoxin.aidcloud.plugins.languages.Language;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.FetchProfile;
+import org.hibernate.annotations.FetchProfiles;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -16,6 +19,11 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PersonEntity")
+@FetchProfiles(
+        @FetchProfile(fetchOverrides = {
+                @FetchProfile.FetchOverride(association = "contactInformation", entity = Person.class, mode = FetchMode.JOIN),
+        }, name = "JOIN_ContactInformation")
+)
 @Entity
 @Table(name = "Person")
 public class Person implements Recordable {

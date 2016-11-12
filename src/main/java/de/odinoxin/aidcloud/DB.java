@@ -16,7 +16,7 @@ public class DB {
         DB.sessionFactory = new Configuration().configure().buildSessionFactory();
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            DB.con = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=AidDesk", "", "");
+            DB.con = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=AidDesk", "DBUSER", "DBPWD");
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }

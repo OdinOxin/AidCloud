@@ -57,7 +57,7 @@ public class Login {
         List<Person> tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
         if (tmpList != null)
             for (Person tmp : tmpList)
-                result.add(new Person(tmp.getId(), tmp.getName(), tmp.getForename(), tmp.getCode(), tmp.getLanguage(), tmp.getAddress(), tmp.getContactInformation()));
+                result.add(new Person(tmp.getId(), tmp.getName(), tmp.getForename(), tmp.getCode(), null, null, null));
         session.close();
         return result;
     }

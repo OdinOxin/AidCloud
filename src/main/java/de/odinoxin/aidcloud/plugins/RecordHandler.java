@@ -18,6 +18,7 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
 
     protected T get(int id) {
         Session session = DB.open();
+        this.setFetchMode(session);
         T entity = session.get((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0], id);
         session.close();
         return entity;
@@ -75,6 +76,10 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
 
     protected List<Expression<String>> getSearchExpressions(Root<T> root) {
         return null;
+    }
+
+    protected void setFetchMode(Session session) {
+
     }
 
     protected boolean anyRecords() {

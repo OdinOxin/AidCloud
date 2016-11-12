@@ -4,6 +4,8 @@ import de.odinoxin.aidcloud.DB;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.addresses.Address;
 import de.odinoxin.aidcloud.plugins.addresses.Address_;
+import de.odinoxin.aidcloud.plugins.contact.information.ContactInformation;
+import de.odinoxin.aidcloud.plugins.contact.information.ContactInformationProvider;
 import de.odinoxin.aidcloud.plugins.countries.Country;
 import de.odinoxin.aidcloud.plugins.countries.Country_;
 import org.hibernate.Session;
@@ -25,11 +27,8 @@ public class PersonProvider extends RecordHandler<Person> {
     @WebMethod
     public Person getPerson(@WebParam(name = "id") int id) {
         Person p = super.get(id);
-        if (p != null) {
-            if (p.getContactInformation() == null || p.getContactInformation().isEmpty())
-                p.setContactInformation(null);
+        if (p != null)
             p.setPwd(null);
-        }
         return p;
     }
 
@@ -83,13 +82,23 @@ public class PersonProvider extends RecordHandler<Person> {
     }
 
     @Override
+    protected void setFetchMode(Session session) {
+        if (session != null)
+            session.enableFetchProfile("JOIN_ContactInformation");
+    }
+
+    @Override
     public void generateDefaults() {
         if (!this.anyRecords()) {
+            ContactInformation infoA = new ContactInformationProvider().searchContactInformation(new String[]{"A"}).get(0);
+            ContactInformation infoB = new ContactInformationProvider().searchContactInformation(new String[]{"B"}).get(0);
+
             Person admin = new Person();
-            admin.setForename("AidDesk");
-            admin.setName("Admin");
-            admin.setCode("ADMIN");
-            admin.setPwd("AidDesk");
+            admin.setForename("Test");
+            admin.setName("User");
+            admin.setPwd("TestUser");
+            admin.getContactInformation().add(infoA);
+            admin.getContactInformation().add(infoB);
             this.save(admin);
         }
     }
