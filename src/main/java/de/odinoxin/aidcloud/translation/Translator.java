@@ -45,6 +45,9 @@ public class Translator implements DefaultValueGenerator {
             new Translation("Deleted!", "Gelöscht!", null),
             new Translation("Successfully deleted.", "Die Daten wurden erfolgreich gelöscht.", "Data have been deleted successfully."),
 
+            new Translation("More items avaiable!", "Mehr Einträge verfügbar!", null),
+            new Translation("Load more items...", "Weitere Einträge laden...", null),
+
             new Translation("Languages", "Sprachen", null),
             new Translation("Language", "Sprache", null),
 

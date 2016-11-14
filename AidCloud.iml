@@ -88,5 +88,6 @@
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.20.0-GA" level="project" />
     <orderEntry type="library" name="Maven: org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-jpamodelgen:5.2.4.Final" level="project" />
+    <orderEntry type="library" name="Maven: javax:javaee-web-api:7.0" level="project" />
   </component>
 </module>

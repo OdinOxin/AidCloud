@@ -1,6 +1,8 @@
 package de.odinoxin.aidcloud.plugins.languages;
 
+import de.odinoxin.aidcloud.AidCloud;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
+import de.odinoxin.aidcloud.plugins.people.Person;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -14,23 +16,28 @@ import java.util.List;
 public class LanguageProvider extends RecordHandler<Language> {
 
     @WebMethod
-    public Language getLanguage(@WebParam(name = "id") int id) {
-        return super.get(id);
+    public Language getLanguage(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
+        return super.get(id, auth);
     }
 
     @WebMethod
-    public Language saveLanguage(@WebParam(name = "entity") Language entity) {
-        return this.getLanguage(super.save(entity));
+    public Language saveLanguage(@WebParam(name = "entity") Language entity, @WebParam(name = "auth") Person auth) {
+        return this.getLanguage(super.save(entity, auth), auth);
     }
 
     @WebMethod
-    public boolean deleteLanguage(@WebParam(name = "id") int id) {
-        return super.delete(id);
+    public boolean deleteLanguage(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
+        return super.delete(id, auth);
     }
 
     @WebMethod
-    public List<Language> searchLanguage(@WebParam(name = "expr") String[] expr) {
-        return super.search(expr);
+    public List<Language> searchLanguage(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max, @WebParam(name = "auth") Person auth) {
+        return super.search(expr, max, auth);
+    }
+
+    @Override
+    protected Expression<Integer> getIdExpression(Root<Language> root) {
+        return root.get(Language_.id);
     }
 
     @Override
@@ -47,11 +54,11 @@ public class LanguageProvider extends RecordHandler<Language> {
             Language german = new Language();
             german.setName("Deutsch");
             german.setCode("DEU");
-            this.saveLanguage(german);
+            this.saveLanguage(german, AidCloud.SYSTEM);
             Language english = new Language();
             english.setName("English");
             english.setCode("USA");
-            this.saveLanguage(english);
+            this.saveLanguage(english, AidCloud.SYSTEM);
         }
     }
 }

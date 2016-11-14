@@ -1,11 +1,14 @@
 package de.odinoxin.aidcloud.plugins;
 
 import de.odinoxin.aidcloud.DB;
+import de.odinoxin.aidcloud.Login;
 import de.odinoxin.aidcloud.Provider;
+import de.odinoxin.aidcloud.plugins.people.Person;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
+import javax.ws.rs.NotAuthorizedException;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +19,9 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         generateDefaults();
     }
 
-    protected T get(int id) {
+    protected T get(int id, Person auth) {
+        if (!Login.checkLogin(auth))
+            throw new NotAuthorizedException("");
         Session session = DB.open();
         this.setFetchMode(session);
         T entity = session.get((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0], id);
@@ -24,7 +29,9 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return entity;
     }
 
-    protected int save(T entity) {
+    protected int save(T entity, Person auth) {
+        if (!Login.checkLogin(auth))
+            throw new NotAuthorizedException("");
         Session session = DB.open();
         session.beginTransaction();
         int id = entity.getId();
@@ -37,8 +44,10 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return id;
     }
 
-    protected boolean delete(int id) {
-        T entity = this.get(id);
+    protected boolean delete(int id, Person auth) {
+        if (!Login.checkLogin(auth))
+            throw new NotAuthorizedException("");
+        T entity = this.get(id, auth);
         Session session = DB.open();
         session.beginTransaction();
         session.delete(entity);
@@ -47,31 +56,40 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return true;
     }
 
-    protected List<T> search(String[] expressions) {
+    protected List<T> search(String[] expressions, int max, Person auth) {
+        if (!Login.checkLogin(auth))
+            throw new NotAuthorizedException("");
         Session session = DB.open();
         CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
         CriteriaQuery<T> criteria = builder.createQuery((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
         Predicate predicates = builder.conjunction();
         Root<T> root = criteria.from((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
         if (expressions != null && expressions.length > 0) {
-            for (int i = 0; i < expressions.length; i++)
-                expressions[i] = "%" + expressions[i].toLowerCase() + "%";
             predicates = builder.disjunction();
+            Expression<Integer> dbIdExpression = getIdExpression(root);
             List<Expression<String>> dbExpressions = getSearchExpressions(root);
-            if (dbExpressions != null)
-                for (String expr : expressions)
-                    for (Expression<String> dbExpr : dbExpressions)
-                        predicates = builder.or(predicates, builder.like(builder.lower(dbExpr), expr));
+            for (String expr : expressions) {
+                if (dbIdExpression != null && expr.matches("-?\\d+"))
+                    predicates = builder.or(predicates, builder.equal(dbIdExpression, Integer.parseInt(expr)));
+                if (dbExpressions != null)
+                    for (Expression<String> dbExpr : dbExpressions) {
+                        predicates = builder.or(predicates, builder.like(builder.lower(dbExpr), "%" + expr.toLowerCase() + "%"));
+                    }
+            }
         }
         criteria.where(predicates);
         EntityManager em = session.getEntityManagerFactory().createEntityManager();
-        List<T> tmpList = em.createQuery(criteria).getResultList();
+        List<T> tmpList = em.createQuery(criteria).setMaxResults(Math.max(0, max) + 1).getResultList();
         List<T> result = new ArrayList<>();
         for (T tmp : tmpList)
             result.add((T) tmp.clone());
         em.close();
         session.close();
         return result;
+    }
+
+    protected Expression<Integer> getIdExpression(Root<T> root) {
+        return null;
     }
 
     protected List<Expression<String>> getSearchExpressions(Root<T> root) {

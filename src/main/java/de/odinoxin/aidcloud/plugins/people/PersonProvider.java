@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.people;
 
+import de.odinoxin.aidcloud.AidCloud;
 import de.odinoxin.aidcloud.DB;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.addresses.Address;
@@ -25,29 +26,29 @@ import java.util.List;
 public class PersonProvider extends RecordHandler<Person> {
 
     @WebMethod
-    public Person getPerson(@WebParam(name = "id") int id) {
-        Person p = super.get(id);
+    public Person getPerson(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
+        Person p = super.get(id, auth);
         if (p != null)
             p.setPwd(null);
         return p;
     }
 
     @WebMethod
-    public Person savePerson(@WebParam(name = "entity") Person entity) {
-        Person current = this.get(entity.getId());
+    public Person savePerson(@WebParam(name = "entity") Person entity, @WebParam(name = "auth") Person auth) {
+        Person current = this.get(entity.getId(), auth);
         if (current != null)
             entity.setPwd(current.getPwd());
-        return this.getPerson(super.save(entity));
+        return this.getPerson(super.save(entity, auth), auth);
     }
 
     @WebMethod
-    public boolean deletePerson(@WebParam(name = "id") int id) {
-        return super.delete(id);
+    public boolean deletePerson(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
+        return super.delete(id, auth);
     }
 
     @WebMethod
-    public List<Person> searchPerson(@WebParam(name = "expr") String[] expr) {
-        return super.search(expr);
+    public List<Person> searchPerson(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max, @WebParam(name = "auth") Person auth) {
+        return super.search(expr, max, auth);
     }
 
     @WebMethod
@@ -64,6 +65,11 @@ public class PersonProvider extends RecordHandler<Person> {
         session.getTransaction().commit();
         session.close();
         return success;
+    }
+
+    @Override
+    protected Expression<Integer> getIdExpression(Root<Person> root) {
+        return root.get(Person_.id);
     }
 
     @Override
@@ -90,16 +96,11 @@ public class PersonProvider extends RecordHandler<Person> {
     @Override
     public void generateDefaults() {
         if (!this.anyRecords()) {
-            ContactInformation infoA = new ContactInformationProvider().searchContactInformation(new String[]{"A"}).get(0);
-            ContactInformation infoB = new ContactInformationProvider().searchContactInformation(new String[]{"B"}).get(0);
-
             Person admin = new Person();
-            admin.setForename("Test");
-            admin.setName("User");
-            admin.setPwd("TestUser");
-            admin.getContactInformation().add(infoA);
-            admin.getContactInformation().add(infoB);
-            this.save(admin);
+            admin.setForename("AidDesk");
+            admin.setName("Admin");
+            admin.setPwd("AidDesk");
+            this.save(admin, AidCloud.SYSTEM);
         }
     }
 }

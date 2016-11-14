@@ -3,6 +3,7 @@ package de.odinoxin.aidcloud.plugins.addresses;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.countries.Country;
 import de.odinoxin.aidcloud.plugins.countries.Country_;
+import de.odinoxin.aidcloud.plugins.people.Person;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -18,23 +19,28 @@ import java.util.List;
 public class AddressProvider extends RecordHandler<Address> {
 
     @WebMethod
-    public Address getAddress(@WebParam(name = "id") int id) {
-        return super.get(id);
+    public Address getAddress(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
+        return super.get(id, auth);
     }
 
     @WebMethod
-    public Address saveAddress(@WebParam(name = "entity") Address entity) {
-        return this.getAddress(super.save(entity));
+    public Address saveAddress(@WebParam(name = "entity") Address entity, @WebParam(name = "auth") Person auth) {
+        return this.getAddress(super.save(entity, auth), auth);
     }
 
     @WebMethod
-    public boolean deleteAddress(@WebParam(name = "id") int id) {
-        return super.delete(id);
+    public boolean deleteAddress(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
+        return super.delete(id, auth);
     }
 
     @WebMethod
-    public List<Address> searchAddress(@WebParam(name = "expr") String[] expr) {
-        return super.search(expr);
+    public List<Address> searchAddress(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max, @WebParam(name = "auth") Person auth) {
+        return super.search(expr, max, auth);
+    }
+
+    @Override
+    protected Expression<Integer> getIdExpression(Root<Address> root) {
+        return root.get(Address_.id);
     }
 
     @Override

@@ -4,25 +4,19 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
 public class DB {
-    public static Connection con;
     private static SessionFactory sessionFactory;
 
     static {
         DB.sessionFactory = new Configuration().configure().buildSessionFactory();
-        try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            DB.con = DriverManager.getConnection("jdbc:sqlserver://localhost;databaseName=AidDesk", "DBUSER", "DBPWD");
-        } catch (SQLException | ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
     }
 
     public static Session open() {
-        return DB.sessionFactory.openSession();
+        if (DB.sessionFactory == null)
+            throw new IllegalStateException("SessionFactory could not be initialized!");
+        Session session = DB.sessionFactory.openSession();
+        if (session == null)
+            throw new IllegalStateException("Could not open session!");
+        return session;
     }
 }

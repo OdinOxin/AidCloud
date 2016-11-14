@@ -7,36 +7,41 @@ import org.hibernate.Session;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebService
 public class Login {
-    @WebMethod
-    public boolean checkLogin(int userId, String pwd) {
-        try {
-            PreparedStatement statement = DB.con.prepareStatement("SELECT 'OK' FROM Person WHERE ID = ? AND Pwd LIKE ?");
-            statement.setInt(1, userId);
-            statement.setString(2, pwd);
-            ResultSet dbRes = statement.executeQuery();
-            if (dbRes.next())
-                return true;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return false;
+    private static Login instance = new Login();
+
+    public static boolean checkLogin(Person p) {
+        return p == AidCloud.SYSTEM || Login.instance.checkLogin(p.getId(), p.getPwd());
     }
 
     @WebMethod
-    public List<Person> searchLogin(@WebParam(name = "expr") String[] expr) {
+    public boolean checkLogin(@WebParam(name = "userId") int userId, @WebParam(name = "pwd") String pwd) {
+        boolean access = false;
+        Session session = DB.open();
+        CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
+        CriteriaQuery<Person> criteria = builder.createQuery(Person.class);
+        Predicate predicates = builder.conjunction();
+        Root<Person> root = criteria.from(Person.class);
+        predicates = builder.and(predicates, builder.equal(root.get(Person_.id), userId));
+        predicates = builder.and(predicates, builder.equal(root.get(Person_.pwd), pwd));
+        criteria.where(predicates);
+        List<Person> tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
+        if (tmpList != null && tmpList.size() == 1)
+            access = true;
+        session.close();
+        return access;
+    }
+
+    @WebMethod
+    public List<Person> searchLogin(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max) {
         Session session = DB.open();
         List<Person> result = new ArrayList<>();
         CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
@@ -54,7 +59,7 @@ public class Login {
             }
         }
         criteria.where(predicates);
-        List<Person> tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
+        List<Person> tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).setMaxResults(Math.max(0, max) + 1).getResultList();
         if (tmpList != null)
             for (Person tmp : tmpList)
                 result.add(new Person(tmp.getId(), tmp.getName(), tmp.getForename(), tmp.getCode(), null, null, null));
