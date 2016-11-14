@@ -1,38 +1,41 @@
 package de.odinoxin.aidcloud.plugins.languages;
 
-import de.odinoxin.aidcloud.AidCloud;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
-import de.odinoxin.aidcloud.plugins.people.Person;
 
+import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
+import javax.xml.ws.WebServiceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebService
 public class LanguageProvider extends RecordHandler<Language> {
 
+    @Resource
+    WebServiceContext wsCtx;
+
     @WebMethod
-    public Language getLanguage(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        return super.get(id, auth);
+    public Language getLanguage(@WebParam(name = "id") int id) {
+        return super.get(id, this.wsCtx);
     }
 
     @WebMethod
-    public Language saveLanguage(@WebParam(name = "entity") Language entity, @WebParam(name = "auth") Person auth) {
-        return this.getLanguage(super.save(entity, auth), auth);
+    public Language saveLanguage(@WebParam(name = "entity") Language entity) {
+        return this.getLanguage(super.save(entity, this.wsCtx));
     }
 
     @WebMethod
-    public boolean deleteLanguage(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        return super.delete(id, auth);
+    public boolean deleteLanguage(@WebParam(name = "id") int id) {
+        return super.delete(id, this.wsCtx);
     }
 
     @WebMethod
-    public List<Language> searchLanguage(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max, @WebParam(name = "auth") Person auth) {
-        return super.search(expr, max, auth);
+    public List<Language> searchLanguage(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max) {
+        return super.search(expr, max, this.wsCtx);
     }
 
     @Override
@@ -54,11 +57,11 @@ public class LanguageProvider extends RecordHandler<Language> {
             Language german = new Language();
             german.setName("Deutsch");
             german.setCode("DEU");
-            this.saveLanguage(german, AidCloud.SYSTEM);
+            this.generate(german);
             Language english = new Language();
             english.setName("English");
             english.setCode("USA");
-            this.saveLanguage(english, AidCloud.SYSTEM);
+            this.generate(english);
         }
     }
 }

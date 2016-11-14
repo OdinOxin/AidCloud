@@ -3,8 +3,8 @@ package de.odinoxin.aidcloud.plugins.addresses;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.countries.Country;
 import de.odinoxin.aidcloud.plugins.countries.Country_;
-import de.odinoxin.aidcloud.plugins.people.Person;
 
+import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -12,30 +12,34 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import javax.xml.ws.WebServiceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebService
 public class AddressProvider extends RecordHandler<Address> {
 
+    @Resource
+    private WebServiceContext wsCtx;
+
     @WebMethod
-    public Address getAddress(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        return super.get(id, auth);
+    public Address getAddress(@WebParam(name = "id") int id) {
+        return super.get(id, this.wsCtx);
     }
 
     @WebMethod
-    public Address saveAddress(@WebParam(name = "entity") Address entity, @WebParam(name = "auth") Person auth) {
-        return this.getAddress(super.save(entity, auth), auth);
+    public Address saveAddress(@WebParam(name = "entity") Address entity) {
+        return this.getAddress(super.save(entity, this.wsCtx));
     }
 
     @WebMethod
-    public boolean deleteAddress(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        return super.delete(id, auth);
+    public boolean deleteAddress(@WebParam(name = "id") int id) {
+        return super.delete(id, this.wsCtx);
     }
 
     @WebMethod
-    public List<Address> searchAddress(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max, @WebParam(name = "auth") Person auth) {
-        return super.search(expr, max, auth);
+    public List<Address> searchAddress(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max) {
+        return super.search(expr, max, this.wsCtx);
     }
 
     @Override

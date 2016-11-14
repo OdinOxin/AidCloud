@@ -5,18 +5,16 @@ import de.odinoxin.aidcloud.plugins.contact.information.ContactInformationProvid
 import de.odinoxin.aidcloud.plugins.contact.types.ContactTypeProvider;
 import de.odinoxin.aidcloud.plugins.countries.CountryProvider;
 import de.odinoxin.aidcloud.plugins.languages.LanguageProvider;
-import de.odinoxin.aidcloud.plugins.people.Person;
 import de.odinoxin.aidcloud.plugins.people.PersonProvider;
 import de.odinoxin.aidcloud.translation.Translator;
 
 import javax.xml.ws.Endpoint;
 
 public class AidCloud {
+    public static final String INVALID_SESSION = "Invalid session, or session is over!";
     private static final String ADDRESS = "http://localhost:15123/AidCloud";
-    public static final Person SYSTEM = new Person(-1);
 
     public static void main(String[] args) {
-        AidCloud.SYSTEM.setName("SYSTEM");
         Endpoint.publish(AidCloud.ADDRESS + "/Login", new Login());
         Endpoint.publish(AidCloud.ADDRESS + "/LanguageProvider", new LanguageProvider());
         Endpoint.publish(AidCloud.ADDRESS + "/Translator", Translator.get());

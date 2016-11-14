@@ -1,16 +1,14 @@
 package de.odinoxin.aidcloud.plugins.people;
 
-import de.odinoxin.aidcloud.AidCloud;
 import de.odinoxin.aidcloud.DB;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.addresses.Address;
 import de.odinoxin.aidcloud.plugins.addresses.Address_;
-import de.odinoxin.aidcloud.plugins.contact.information.ContactInformation;
-import de.odinoxin.aidcloud.plugins.contact.information.ContactInformationProvider;
 import de.odinoxin.aidcloud.plugins.countries.Country;
 import de.odinoxin.aidcloud.plugins.countries.Country_;
 import org.hibernate.Session;
 
+import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -19,36 +17,40 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import javax.xml.ws.WebServiceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebService
 public class PersonProvider extends RecordHandler<Person> {
 
+    @Resource
+    WebServiceContext wsCtx;
+
     @WebMethod
-    public Person getPerson(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        Person p = super.get(id, auth);
+    public Person getPerson(@WebParam(name = "id") int id) {
+        Person p = super.get(id, this.wsCtx);
         if (p != null)
             p.setPwd(null);
         return p;
     }
 
     @WebMethod
-    public Person savePerson(@WebParam(name = "entity") Person entity, @WebParam(name = "auth") Person auth) {
-        Person current = this.get(entity.getId(), auth);
+    public Person savePerson(@WebParam(name = "entity") Person entity) {
+        Person current = this.get(entity.getId(), this.wsCtx);
         if (current != null)
             entity.setPwd(current.getPwd());
-        return this.getPerson(super.save(entity, auth), auth);
+        return this.getPerson(super.save(entity, this.wsCtx));
     }
 
     @WebMethod
-    public boolean deletePerson(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        return super.delete(id, auth);
+    public boolean deletePerson(@WebParam(name = "id") int id) {
+        return super.delete(id, this.wsCtx);
     }
 
     @WebMethod
-    public List<Person> searchPerson(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max, @WebParam(name = "auth") Person auth) {
-        return super.search(expr, max, auth);
+    public List<Person> searchPerson(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max) {
+        return super.search(expr, max, this.wsCtx);
     }
 
     @WebMethod
@@ -100,7 +102,7 @@ public class PersonProvider extends RecordHandler<Person> {
             admin.setForename("AidDesk");
             admin.setName("Admin");
             admin.setPwd("AidDesk");
-            this.save(admin, AidCloud.SYSTEM);
+            this.generate(admin);
         }
     }
 }

@@ -1,14 +1,15 @@
 package de.odinoxin.aidcloud.plugins;
 
+import de.odinoxin.aidcloud.AidCloud;
 import de.odinoxin.aidcloud.DB;
 import de.odinoxin.aidcloud.Login;
 import de.odinoxin.aidcloud.Provider;
-import de.odinoxin.aidcloud.plugins.people.Person;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.*;
 import javax.ws.rs.NotAuthorizedException;
+import javax.xml.ws.WebServiceContext;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,9 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         generateDefaults();
     }
 
-    protected T get(int id, Person auth) {
-        if (!Login.checkLogin(auth))
-            throw new NotAuthorizedException("");
+    protected T get(int id, WebServiceContext wsCtx) {
+        if (!Login.checkSession(wsCtx))
+            throw new NotAuthorizedException(AidCloud.INVALID_SESSION);
         Session session = DB.open();
         this.setFetchMode(session);
         T entity = session.get((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0], id);
@@ -29,9 +30,13 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return entity;
     }
 
-    protected int save(T entity, Person auth) {
-        if (!Login.checkLogin(auth))
-            throw new NotAuthorizedException("");
+    protected int save(T entity, WebServiceContext wsCtx) {
+        if (!Login.checkSession(wsCtx))
+            throw new NotAuthorizedException(AidCloud.INVALID_SESSION);
+        return this.generate(entity);
+    }
+
+    protected int generate(T entity) {
         Session session = DB.open();
         session.beginTransaction();
         int id = entity.getId();
@@ -44,10 +49,10 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return id;
     }
 
-    protected boolean delete(int id, Person auth) {
-        if (!Login.checkLogin(auth))
-            throw new NotAuthorizedException("");
-        T entity = this.get(id, auth);
+    protected boolean delete(int id, WebServiceContext wsCtx) {
+        if (!Login.checkSession(wsCtx))
+            throw new NotAuthorizedException(AidCloud.INVALID_SESSION);
+        T entity = this.get(id, wsCtx);
         Session session = DB.open();
         session.beginTransaction();
         session.delete(entity);
@@ -56,9 +61,9 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return true;
     }
 
-    protected List<T> search(String[] expressions, int max, Person auth) {
-        if (!Login.checkLogin(auth))
-            throw new NotAuthorizedException("");
+    protected List<T> search(String[] expressions, int max, WebServiceContext wsCtx) {
+        if (!Login.checkSession(wsCtx))
+            throw new NotAuthorizedException(AidCloud.INVALID_SESSION);
         Session session = DB.open();
         CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
         CriteriaQuery<T> criteria = builder.createQuery((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);

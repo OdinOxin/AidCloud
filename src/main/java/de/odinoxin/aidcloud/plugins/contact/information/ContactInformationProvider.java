@@ -3,8 +3,8 @@ package de.odinoxin.aidcloud.plugins.contact.information;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.contact.types.ContactType;
 import de.odinoxin.aidcloud.plugins.contact.types.ContactType_;
-import de.odinoxin.aidcloud.plugins.people.Person;
 
+import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -12,30 +12,34 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
+import javax.xml.ws.WebServiceContext;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebService
 public class ContactInformationProvider extends RecordHandler<ContactInformation> {
 
+    @Resource
+    WebServiceContext wsCtx;
+
     @WebMethod
-    public ContactInformation getContactInformation(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        return super.get(id, auth);
+    public ContactInformation getContactInformation(@WebParam(name = "id") int id) {
+        return super.get(id, this.wsCtx);
     }
 
     @WebMethod
-    public ContactInformation saveContactInformation(@WebParam(name = "entity") ContactInformation entity, @WebParam(name = "auth") Person auth) {
-        return this.getContactInformation(super.save(entity, auth), auth);
+    public ContactInformation saveContactInformation(@WebParam(name = "entity") ContactInformation entity) {
+        return this.getContactInformation(super.save(entity, this.wsCtx));
     }
 
     @WebMethod
-    public boolean deleteContactInformation(@WebParam(name = "id") int id, @WebParam(name = "auth") Person auth) {
-        return super.delete(id, auth);
+    public boolean deleteContactInformation(@WebParam(name = "id") int id) {
+        return super.delete(id, this.wsCtx);
     }
 
     @WebMethod
-    public List<ContactInformation> searchContactInformation(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max, @WebParam(name = "auth") Person auth) {
-        return super.search(expr, max, auth);
+    public List<ContactInformation> searchContactInformation(@WebParam(name = "expr") String[] expr, @WebParam(name = "max") int max) {
+        return super.search(expr, max, this.wsCtx);
     }
 
     @Override

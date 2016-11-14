@@ -4,6 +4,7 @@ import de.odinoxin.aidcloud.plugins.people.Person;
 import de.odinoxin.aidcloud.plugins.people.Person_;
 import org.hibernate.Session;
 
+import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -11,26 +12,56 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+import javax.ws.rs.NotAuthorizedException;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
+import java.util.*;
 
 @WebService
 public class Login {
-    private static Login instance = new Login();
+    private static final int SESSION_DURATION = 300000;
+    private static Map<Integer, String> sessions = new Hashtable<>();
 
-    public static boolean checkLogin(Person p) {
-        return p == AidCloud.SYSTEM || Login.instance.checkLogin(p.getId(), p.getPwd());
+    public static boolean checkSession(WebServiceContext wsCtx) {
+        MessageContext msgCtx = wsCtx.getMessageContext();
+        Map<String, List<String>> httpHeaders = (Map<String, List<String>>) msgCtx.get(MessageContext.HTTP_REQUEST_HEADERS);
+        List<String> users = httpHeaders.get("Username");
+        List<String> pwds = httpHeaders.get("Password");
+        int id = 0;
+        String uuid = "";
+        if (users != null && users.size() > 0 && users.get(0).matches("-?\\d+"))
+            id = Integer.parseInt(users.get(0));
+        if (pwds != null && pwds.size() > 0)
+            uuid = pwds.get(0);
+        return Login.sessions.containsKey(id) && Login.sessions.get(id).equals(uuid);
     }
 
     @WebMethod
-    public boolean checkLogin(@WebParam(name = "userId") int userId, @WebParam(name = "pwd") String pwd) {
+    public String getSession(@WebParam(name = "id") int id, @WebParam(name = "pwd") String pwd) {
+        if (this.checkLogin(id, pwd)) {
+            Login.sessions.put(id, UUID.randomUUID().toString());
+            new Thread(() -> {
+                try {
+                    Thread.sleep(SESSION_DURATION);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                Login.sessions.remove(id);
+            }).start();
+            return Login.sessions.get(id);
+        }
+        return null;
+    }
+
+    @WebMethod
+    public boolean checkLogin(@WebParam(name = "id") int id, @WebParam(name = "pwd") String pwd) {
         boolean access = false;
         Session session = DB.open();
         CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
         CriteriaQuery<Person> criteria = builder.createQuery(Person.class);
         Predicate predicates = builder.conjunction();
         Root<Person> root = criteria.from(Person.class);
-        predicates = builder.and(predicates, builder.equal(root.get(Person_.id), userId));
+        predicates = builder.and(predicates, builder.equal(root.get(Person_.id), id));
         predicates = builder.and(predicates, builder.equal(root.get(Person_.pwd), pwd));
         criteria.where(predicates);
         List<Person> tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
