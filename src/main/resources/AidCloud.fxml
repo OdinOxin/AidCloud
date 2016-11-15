@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+<GridPane xmlns="http://javafx.com/javafx/8"
+          id="dbGrid"
+          vgap="5"
+          hgap="5">
+
+    <padding>
+        <Insets top="5" left="5" right="5" bottom="5"/>
+    </padding>
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="NEVER"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
+    </columnConstraints>
+
+    <rowConstraints>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+    </rowConstraints>
+
+    <Text id="lblURL"
+          text="AidCloud URL"
+          GridPane.rowIndex="0"
+          GridPane.columnIndex="0"/>
+    <TextField id="txfURL"
+               GridPane.rowIndex="0"
+               GridPane.columnIndex="1"
+               GridPane.columnSpan="2"/>
+
+    <Text id="lblDBURL"
+          text="DB URL"
+          GridPane.rowIndex="1"
+          GridPane.columnIndex="0"/>
+    <TextField id="txfDBURL"
+               GridPane.rowIndex="1"
+               GridPane.columnIndex="1"/>
+    <ComboBox id="cboDB"
+              GridPane.rowIndex="1"
+              GridPane.columnIndex="2"/>
+
+    <Text id="lblDB"
+          text="DB"
+          GridPane.rowIndex="2"
+          GridPane.columnIndex="0"/>
+    <TextField id="txfDB"
+               GridPane.rowIndex="2"
+               GridPane.columnIndex="1"/>
+
+    <Text id="lblUser"
+          text="DB User"
+          GridPane.rowIndex="3"
+          GridPane.columnIndex="0"/>
+    <TextField id="txfUser"
+               GridPane.rowIndex="3"
+               GridPane.columnIndex="1"
+               GridPane.columnSpan="2"/>
+
+    <Text id="lblPwd"
+          text="DB Password"
+          GridPane.rowIndex="4"
+          GridPane.columnIndex="0"/>
+    <PasswordField id="pwfPwd"
+                   GridPane.rowIndex="4"
+                   GridPane.columnIndex="1"
+                   GridPane.columnSpan="2"/>
+
+    <Button id="btnLaunch"
+            text="Start"
+            GridPane.rowIndex="5"
+            GridPane.columnIndex="0"
+            GridPane.columnSpan="3"
+            GridPane.halignment="CENTER"/>
+
+</GridPane>

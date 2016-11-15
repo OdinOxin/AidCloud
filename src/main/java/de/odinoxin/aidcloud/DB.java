@@ -7,8 +7,8 @@ import org.hibernate.cfg.Configuration;
 public class DB {
     private static SessionFactory sessionFactory;
 
-    static {
-        DB.sessionFactory = new Configuration().configure().buildSessionFactory();
+    public static void setSessionFactory(SessionFactory factory) {
+        sessionFactory = factory;
     }
 
     public static Session open() {

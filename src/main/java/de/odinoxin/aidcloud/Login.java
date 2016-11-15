@@ -4,7 +4,6 @@ import de.odinoxin.aidcloud.plugins.people.Person;
 import de.odinoxin.aidcloud.plugins.people.Person_;
 import org.hibernate.Session;
 
-import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -12,14 +11,16 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.ws.rs.NotAuthorizedException;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 @WebService
 public class Login {
-    private static final int SESSION_DURATION = 300000;
+    private static final int SESSION_DURATION = 10000;
     private static Map<Integer, String> sessions = new Hashtable<>();
 
     public static boolean checkSession(WebServiceContext wsCtx) {
@@ -28,27 +29,28 @@ public class Login {
         List<String> users = httpHeaders.get("Username");
         List<String> pwds = httpHeaders.get("Password");
         int id = 0;
-        String uuid = "";
+        String pwd = "";
         if (users != null && users.size() > 0 && users.get(0).matches("-?\\d+"))
             id = Integer.parseInt(users.get(0));
         if (pwds != null && pwds.size() > 0)
-            uuid = pwds.get(0);
-        return Login.sessions.containsKey(id) && Login.sessions.get(id).equals(uuid);
+            pwd = pwds.get(0);
+        return Login.sessions.containsKey(id) && Login.sessions.get(id).equals(pwd);
     }
 
     @WebMethod
     public String getSession(@WebParam(name = "id") int id, @WebParam(name = "pwd") String pwd) {
         if (this.checkLogin(id, pwd)) {
-            Login.sessions.put(id, UUID.randomUUID().toString());
-            new Thread(() -> {
-                try {
-                    Thread.sleep(SESSION_DURATION);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-                Login.sessions.remove(id);
-            }).start();
-            return Login.sessions.get(id);
+            Login.sessions.put(id, pwd);
+//            Login.sessions.put(id, UUID.randomUUID().toString());
+//            new Thread(() -> {
+//                try {
+//                    Thread.sleep(SESSION_DURATION);
+//                } catch (InterruptedException ex) {
+//                    ex.printStackTrace();
+//                }
+//                Login.sessions.remove(id);
+//            }).start();
+            return "OK"; //Login.sessions.get(id);
         }
         return null;
     }
