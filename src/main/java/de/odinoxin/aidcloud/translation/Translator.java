@@ -1,7 +1,7 @@
 package de.odinoxin.aidcloud.translation;
 
 import de.odinoxin.aidcloud.DB;
-import de.odinoxin.aidcloud.DefaultValueGenerator;
+import de.odinoxin.aidcloud.plugins.RecordHandler;
 import org.hibernate.Session;
 
 import javax.jws.WebMethod;
@@ -11,7 +11,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @WebService
-public class Translator implements DefaultValueGenerator {
+public class Translator extends RecordHandler<Translation> {
 
     private static final Translation[] TRANSLATIONS = new Translation[]{
             new Translation("ID"),
@@ -119,11 +119,13 @@ public class Translator implements DefaultValueGenerator {
 
     @Override
     public void generateDefaults() {
-        Session session = DB.open();
-        session.beginTransaction();
-        for (Translation translation : TRANSLATIONS)
-            session.save(translation);
-        session.getTransaction().commit();
-        session.close();
+        if (!this.anyRecords()) {
+            Session session = DB.open();
+            session.beginTransaction();
+            for (Translation translation : TRANSLATIONS)
+                session.save(translation);
+            session.getTransaction().commit();
+            session.close();
+        }
     }
 }

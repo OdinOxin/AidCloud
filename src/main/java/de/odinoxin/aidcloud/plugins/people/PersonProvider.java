@@ -59,7 +59,7 @@ public class PersonProvider extends RecordHandler<Person> {
             return false;
         Session session = DB.open();
         session.beginTransaction();
-        Query q = session.createQuery("UPDATE Person SET Pwd = :NewPwd WHERE ID = :ID AND Pwd LIKE :CurrentPwd");
+        Query q = session.createQuery("UPDATE Person SET Pwd = :NewPwd WHERE ID = :ID AND (Pwd LIKE :CurrentPwd" + (currentPwd == null || currentPwd.isEmpty() ? " OR Pwd IS NULL" : "") + ")");
         q.setParameter("ID", id);
         q.setParameter("CurrentPwd", currentPwd);
         q.setParameter("NewPwd", newPwd);

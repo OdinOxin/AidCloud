@@ -1,5 +1,8 @@
 package de.odinoxin.aidcloud.translation;
 
+import de.odinoxin.aidcloud.plugins.Recordable;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -7,7 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Translation")
-public class Translation {
+public class Translation implements Recordable {
 
     @Id
     @GeneratedValue
@@ -44,6 +47,11 @@ public class Translation {
         return id;
     }
 
+    @Override
+    public void setId(int id) {
+        throw new NotImplementedException();
+    }
+
     public String getSys() {
         return sys;
     }
@@ -66,5 +74,10 @@ public class Translation {
 
     public void setUsa(String usa) {
         this.usa = usa;
+    }
+
+    @Override
+    public Object clone() {
+        return null;
     }
 }

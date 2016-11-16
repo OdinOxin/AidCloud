@@ -64,7 +64,11 @@ public class Login {
         Predicate predicates = builder.conjunction();
         Root<Person> root = criteria.from(Person.class);
         predicates = builder.and(predicates, builder.equal(root.get(Person_.id), id));
-        predicates = builder.and(predicates, builder.equal(root.get(Person_.pwd), pwd));
+        Predicate pwdPredicates = builder.disjunction();
+        pwdPredicates = builder.or(pwdPredicates, builder.equal(root.get(Person_.pwd), pwd));
+        if(pwd == null || pwd.isEmpty())
+            pwdPredicates = builder.or(pwdPredicates, builder.isNull(root.get(Person_.pwd)));
+        predicates = builder.and(predicates, pwdPredicates);
         criteria.where(predicates);
         List<Person> tmpList = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList();
         if (tmpList != null && tmpList.size() == 1)
