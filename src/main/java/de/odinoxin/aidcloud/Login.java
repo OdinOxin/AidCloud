@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud;
 
+import com.sun.net.httpserver.HttpHandler;
 import de.odinoxin.aidcloud.plugins.people.Person;
 import de.odinoxin.aidcloud.plugins.people.Person_;
 import org.hibernate.Session;
