@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
 <GridPane xmlns="http://javafx.com/javafx/8"
           id="dbGrid"
           vgap="5"
@@ -34,8 +34,10 @@
           GridPane.columnIndex="0"/>
     <TextField id="txfURL"
                GridPane.rowIndex="0"
-               GridPane.columnIndex="1"
-               GridPane.columnSpan="2"/>
+               GridPane.columnIndex="1"/>
+    <TextField id="txfPort"
+               GridPane.rowIndex="0"
+               GridPane.columnIndex="2"/>
 
     <Text id="lblDBURL"
           text="DB URL"
