@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.contact.types;
 
+import de.odinoxin.aidcloud.ConcurrentFault;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 
 import javax.annotation.Resource;
@@ -24,8 +25,8 @@ public class ContactTypeProvider extends RecordHandler<ContactType> {
     }
 
     @WebMethod
-    public ContactType saveContactType(@WebParam(name = "entity") ContactType entity) {
-        return this.getContactType(super.save(entity, this.wsCtx));
+    public ContactType saveContactType(@WebParam(name = "entity") ContactType entity, @WebParam(name = "original") ContactType original) throws ConcurrentFault {
+        return this.getContactType(super.save(entity, original, this.wsCtx));
     }
 
     @WebMethod

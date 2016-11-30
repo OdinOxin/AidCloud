@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.countries;
 
+import de.odinoxin.aidcloud.ConcurrentFault;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 
 import javax.annotation.Resource;
@@ -24,8 +25,8 @@ public class CountryProvider extends RecordHandler<Country> {
     }
 
     @WebMethod
-    public Country saveCountry(@WebParam(name = "entity") Country entity) {
-        return this.getCountry(super.save(entity, this.wsCtx));
+    public Country saveCountry(@WebParam(name = "entity") Country entity, @WebParam(name = "original") Country original) throws ConcurrentFault {
+        return this.getCountry(super.save(entity, original, this.wsCtx));
     }
 
     @WebMethod

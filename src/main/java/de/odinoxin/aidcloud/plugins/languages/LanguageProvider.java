@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.languages;
 
+import de.odinoxin.aidcloud.ConcurrentFault;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 
 import javax.annotation.Resource;
@@ -24,8 +25,8 @@ public class LanguageProvider extends RecordHandler<Language> {
     }
 
     @WebMethod
-    public Language saveLanguage(@WebParam(name = "entity") Language entity) {
-        return this.getLanguage(super.save(entity, this.wsCtx));
+    public Language saveLanguage(@WebParam(name = "entity") Language entity, @WebParam(name = "original") Language original) throws ConcurrentFault {
+        return this.getLanguage(super.save(entity, original, this.wsCtx));
     }
 
     @WebMethod

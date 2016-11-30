@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.people;
 
+import de.odinoxin.aidcloud.ConcurrentFault;
 import de.odinoxin.aidcloud.DB;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.addresses.Address;
@@ -36,11 +37,11 @@ public class PersonProvider extends RecordHandler<Person> {
     }
 
     @WebMethod
-    public Person savePerson(@WebParam(name = "entity") Person entity) {
+    public Person savePerson(@WebParam(name = "entity") Person entity, @WebParam(name = "original") Person original) throws ConcurrentFault {
         Person current = this.get(entity.getId(), this.wsCtx);
         if (current != null)
             entity.setPwd(current.getPwd());
-        return this.getPerson(super.save(entity, this.wsCtx));
+        return this.getPerson(super.save(entity, original, this.wsCtx));
     }
 
     @WebMethod

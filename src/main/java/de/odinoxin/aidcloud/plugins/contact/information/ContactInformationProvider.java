@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.contact.information;
 
+import de.odinoxin.aidcloud.ConcurrentFault;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.contact.types.ContactType;
 import de.odinoxin.aidcloud.plugins.contact.types.ContactType_;
@@ -28,8 +29,8 @@ public class ContactInformationProvider extends RecordHandler<ContactInformation
     }
 
     @WebMethod
-    public ContactInformation saveContactInformation(@WebParam(name = "entity") ContactInformation entity) {
-        return this.getContactInformation(super.save(entity, this.wsCtx));
+    public ContactInformation saveContactInformation(@WebParam(name = "entity") ContactInformation entity, @WebParam(name = "original") ContactInformation original) throws ConcurrentFault {
+        return this.getContactInformation(super.save(entity, original, this.wsCtx));
     }
 
     @WebMethod

@@ -1,9 +1,6 @@
 package de.odinoxin.aidcloud.plugins;
 
-import de.odinoxin.aidcloud.AidCloud;
-import de.odinoxin.aidcloud.DB;
-import de.odinoxin.aidcloud.Login;
-import de.odinoxin.aidcloud.Provider;
+import de.odinoxin.aidcloud.*;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
@@ -30,15 +27,27 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         return entity;
     }
 
-    protected int save(T entity, WebServiceContext wsCtx) {
+    protected int save(T entity, T original, WebServiceContext wsCtx) throws ConcurrentFault {
         if (!Login.checkSession(wsCtx))
             throw new NotAuthorizedException(AidCloud.INVALID_SESSION);
+
+        if (entity != null && entity.getId() != 0) {
+            if (original == null)
+                throw new IllegalArgumentException("Original entity cannot be null on update!");
+            if (entity.getId() != original.getId())
+                throw new IllegalArgumentException("Entity is different from original entity!");
+            T current = this.get(original.getId(), wsCtx);
+            if (!original.equals(current))
+                throw new ConcurrentFault("Entity was edited in the meantime!");
+        }
         return this.generate(entity);
     }
 
     protected int generate(T entity) {
         Session session = DB.open();
         session.beginTransaction();
+        if (entity == null)
+            throw new IllegalArgumentException("Entity cannot be null!");
         int id = entity.getId();
         if (id == 0)
             id = (int) session.save(entity);

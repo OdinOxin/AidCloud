@@ -1,5 +1,6 @@
 package de.odinoxin.aidcloud.plugins.addresses;
 
+import de.odinoxin.aidcloud.ConcurrentFault;
 import de.odinoxin.aidcloud.plugins.RecordHandler;
 import de.odinoxin.aidcloud.plugins.countries.Country;
 import de.odinoxin.aidcloud.plugins.countries.Country_;
@@ -28,8 +29,8 @@ public class AddressProvider extends RecordHandler<Address> {
     }
 
     @WebMethod
-    public Address saveAddress(@WebParam(name = "entity") Address entity) {
-        return this.getAddress(super.save(entity, this.wsCtx));
+    public Address saveAddress(@WebParam(name = "entity") Address entity, @WebParam(name = "original") Address original) throws ConcurrentFault {
+        return this.getAddress(super.save(entity, original, this.wsCtx));
     }
 
     @WebMethod
