@@ -23,10 +23,11 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
     protected T get(int id, WebServiceContext wsCtx) {
         if (!Login.checkSession(wsCtx))
             throw new NotAuthorizedException(AidCloud.INVALID_SESSION);
-        Session session = DB.open();
-        this.setFetchMode(session);
-        T entity = session.get((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0], id);
-        session.close();
+        T entity = null;
+        try (Session session = DB.open()) {
+            this.setFetchMode(session);
+            entity = session.get((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0], id);
+        }
         return entity;
     }
 
@@ -37,15 +38,15 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
     }
 
     protected int generate(T entity) {
-        Session session = DB.open();
-        session.beginTransaction();
         int id = entity.getId();
-        if (id == 0)
-            id = (int) session.save(entity);
-        else
-            session.update(entity);
-        session.getTransaction().commit();
-        session.close();
+        try (Session session = DB.open()) {
+            session.beginTransaction();
+            if (id == 0)
+                id = (int) session.save(entity);
+            else
+                session.update(entity);
+            session.getTransaction().commit();
+        }
         return id;
     }
 
@@ -53,11 +54,11 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
         if (!Login.checkSession(wsCtx))
             throw new NotAuthorizedException(AidCloud.INVALID_SESSION);
         T entity = this.get(id, wsCtx);
-        Session session = DB.open();
-        session.beginTransaction();
-        session.delete(entity);
-        session.getTransaction().commit();
-        session.close();
+        try (Session session = DB.open()) {
+            session.beginTransaction();
+            session.delete(entity);
+            session.getTransaction().commit();
+        }
         return true;
     }
 
@@ -106,10 +107,13 @@ public abstract class RecordHandler<T extends Recordable> extends Provider {
     }
 
     protected boolean anyRecords() {
-        Session session = DB.open();
-        CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
-        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-        criteria.select(builder.count(criteria.from((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0])));
-        return session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList().get(0) > 0;
+        boolean anyRecords = false;
+        try (Session session = DB.open()) {
+            CriteriaBuilder builder = session.getEntityManagerFactory().getCriteriaBuilder();
+            CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+            criteria.select(builder.count(criteria.from((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0])));
+            anyRecords = session.getEntityManagerFactory().createEntityManager().createQuery(criteria).getResultList().get(0) > 0;
+        }
+        return anyRecords;
     }
 }
