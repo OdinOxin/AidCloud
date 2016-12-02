@@ -46,7 +46,26 @@ public class ContactType implements Recordable {
 
     @Override
     public Object clone() {
-        return new ContactType(this.getId(), this.getName(), this.getCode(), this.getRegex());
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null
+                || obj.getClass() != this.getClass())
+            return false;
+        ContactType contactType = (ContactType) obj;
+        return contactType.getId() == this.getId()
+                && ((contactType.getName() == null && this.getName() == null) || (contactType.getName() != null && contactType.getName().equals(this.getName())))
+                && ((contactType.getCode() == null && this.getCode() == null) || (contactType.getCode() != null && contactType.getCode().equals(this.getCode())))
+                && ((contactType.getRegex() == null && this.getRegex() == null) || (contactType.getRegex() != null && contactType.getRegex().equals(this.getRegex())));
     }
 
     @Override

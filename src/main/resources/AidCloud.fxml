@@ -17,6 +17,7 @@
         <ColumnConstraints hgrow="NEVER"/>
         <ColumnConstraints hgrow="ALWAYS"/>
         <ColumnConstraints hgrow="ALWAYS"/>
+        <ColumnConstraints hgrow="ALWAYS"/>
     </columnConstraints>
 
     <rowConstraints>
@@ -32,10 +33,10 @@
           text="AidCloud URL"
           GridPane.rowIndex="0"
           GridPane.columnIndex="0"/>
-    <TextField id="txfURL"
+    <TextField id="txfAidCloudURL"
                GridPane.rowIndex="0"
                GridPane.columnIndex="1"/>
-    <TextField id="txfPort"
+    <TextField id="txfAidCloudPort"
                GridPane.rowIndex="0"
                GridPane.columnIndex="2"/>
 
@@ -46,41 +47,45 @@
     <TextField id="txfDBURL"
                GridPane.rowIndex="1"
                GridPane.columnIndex="1"/>
-    <ComboBox id="cboDB"
+    <TextField id="txfDBPort"
+               GridPane.rowIndex="1"
+               GridPane.columnIndex="2"/>
+    <ComboBox id="cboDBType"
               GridPane.rowIndex="1"
-              GridPane.columnIndex="2"/>
+              GridPane.columnIndex="3"/>
 
-    <Text id="lblDB"
-          text="DB"
+    <Text id="lblDBName"
+          text="DB Name"
           GridPane.rowIndex="2"
           GridPane.columnIndex="0"/>
-    <TextField id="txfDB"
+    <TextField id="txfDBName"
                GridPane.rowIndex="2"
-               GridPane.columnIndex="1"/>
+               GridPane.columnIndex="1"
+               GridPane.columnSpan="3"/>
 
-    <Text id="lblUser"
+    <Text id="lblDBUser"
           text="DB User"
           GridPane.rowIndex="3"
           GridPane.columnIndex="0"/>
-    <TextField id="txfUser"
+    <TextField id="txfDBUser"
                GridPane.rowIndex="3"
                GridPane.columnIndex="1"
-               GridPane.columnSpan="2"/>
+               GridPane.columnSpan="3"/>
 
-    <Text id="lblPwd"
+    <Text id="lblDBPwd"
           text="DB Password"
           GridPane.rowIndex="4"
           GridPane.columnIndex="0"/>
-    <PasswordField id="pwfPwd"
+    <PasswordField id="pwfDBPwd"
                    GridPane.rowIndex="4"
                    GridPane.columnIndex="1"
-                   GridPane.columnSpan="2"/>
+                   GridPane.columnSpan="3"/>
 
     <Button id="btnLaunch"
             text="Start"
             GridPane.rowIndex="5"
             GridPane.columnIndex="0"
-            GridPane.columnSpan="3"
+            GridPane.columnSpan="4"
             GridPane.halignment="CENTER"/>
 
 </GridPane>

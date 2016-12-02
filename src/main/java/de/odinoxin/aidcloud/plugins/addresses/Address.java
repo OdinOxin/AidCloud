@@ -52,7 +52,30 @@ public class Address implements Recordable {
 
     @Override
     public Object clone() {
-        return new Address(this.getId(), this.getStreet(), this.getHsNo(), this.getZip(), this.getCity(), this.getCountry());
+        try {
+            Address clone = (Address) super.clone();
+            clone.setCountry((Country) clone.getCountry().clone());
+            return clone;
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null
+                || obj.getClass() != this.getClass())
+            return false;
+        Address address = (Address) obj;
+        return address.getId() == this.getId()
+                && ((address.getStreet() == null && this.getStreet() == null) || (address.getStreet() != null && address.getStreet().equals(this.getStreet())))
+                && ((address.getHsNo() == null && this.getHsNo() == null) || (address.getHsNo() != null && address.getHsNo().equals(this.getHsNo())))
+                && ((address.getZip() == null && this.getZip() == null) || (address.getZip() != null && address.getZip().equals(this.getZip())))
+                && ((address.getCity() == null && this.getCity() == null) || (address.getCity() != null && address.getCity().equals(this.getCity())))
+                && address.getCountry().equals(this.getCountry());
     }
 
     @Override

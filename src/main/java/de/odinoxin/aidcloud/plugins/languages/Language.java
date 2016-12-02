@@ -43,7 +43,25 @@ public class Language implements Recordable {
 
     @Override
     public Object clone() {
-        return new Language(this.getId(), this.getName(), this.getCode());
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null
+                || obj.getClass() != this.getClass())
+            return false;
+        Language language = (Language) obj;
+        return language.getId() == this.getId()
+                && ((language.getName() == null && this.getName() == null) || (language.getName() != null && language.getName().equals(this.getName())))
+                && ((language.getCode() == null && this.getCode() == null) || (language.getCode() != null && language.getCode().equals(this.getCode())));
     }
 
     @Override

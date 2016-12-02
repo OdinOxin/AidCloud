@@ -43,7 +43,27 @@ public class ContactInformation implements Recordable {
 
     @Override
     public Object clone() {
-        return new ContactInformation(this.getId(), this.getContactType(), this.getInformation());
+        try {
+            ContactInformation clone = (ContactInformation) super.clone();
+            clone.setContactType((ContactType) clone.getContactType().clone());
+            return clone;
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null
+                || obj.getClass() != this.getClass())
+            return false;
+        ContactInformation contactInformation = (ContactInformation) obj;
+        return contactInformation.getId() == this.getId()
+                && ((contactInformation.getContactType() == null && this.getContactType() == null) || (contactInformation.getContactType() != null && contactInformation.getContactType().equals(this.getContactType())))
+                && ((contactInformation.getInformation() == null && this.getInformation() == null) || (contactInformation.getInformation() != null && contactInformation.getInformation().equals(this.getInformation())));
     }
 
     @Override

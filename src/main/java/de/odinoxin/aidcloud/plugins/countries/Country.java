@@ -49,7 +49,27 @@ public class Country implements Recordable {
 
     @Override
     public Object clone() {
-        return new Country(this.getId(), this.getAlpha2(), this.getAlpha3(), this.getName(), this.getAreaCode());
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null
+                || obj.getClass() != this.getClass())
+            return false;
+        Country country = (Country) obj;
+        return country.getId() == this.getId()
+                && ((country.getAlpha2() == null && this.getAlpha2() == null) || (country.getAlpha2() != null && country.getAlpha2().equals(this.getAlpha2())))
+                && ((country.getAlpha3() == null && this.getAlpha3() == null) || (country.getAlpha3() != null && country.getAlpha3().equals(this.getAlpha3())))
+                && ((country.getName() == null && this.getName() == null) || (country.getName() != null && country.getName().equals(this.getName())))
+                && ((country.getAreaCode() == null && this.getAreaCode() == null) || (country.getAreaCode() != null && country.getAreaCode().equals(this.getAreaCode())));
     }
 
     @Override

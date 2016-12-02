@@ -82,6 +82,34 @@ public class Person implements Recordable {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null
+                || obj.getClass() != this.getClass())
+            return false;
+        Person person = (Person) obj;
+        if (person.getId() == this.getId()
+                && ((person.getName() == null && this.getName() == null) || (person.getName() != null && person.getName().equals(this.getName())))
+                && ((person.getForename() == null && this.getForename() == null) || (person.getForename() != null && person.getForename().equals(this.getForename())))
+                && ((person.getCode() == null && this.getCode() == null) || (person.getCode() != null && person.getCode().equals(this.getCode())))
+                && ((person.getLanguage() == null && this.getLanguage() == null) || (person.getLanguage() != null && person.getLanguage().equals(this.getLanguage())))
+                && ((person.getAddress() == null && this.getAddress() == null) || (person.getAddress() != null && person.getAddress().equals(this.getAddress())))) {
+            if (person.getContactInformation() != null
+                    && this.getContactInformation() != null
+                    && person.getContactInformation().size() == this.getContactInformation().size()) {
+                for (int i = 0; i < this.getContactInformation().size(); i++)
+                    if (!person.getContactInformation().get(i).equals(this.getContactInformation().get(i)))
+                        return false;
+                return true;
+            } else if (person.getContactInformation() == null
+                    && this.getContactInformation() == null)
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public int getId() {
         return id;
     }
