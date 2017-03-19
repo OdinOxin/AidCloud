@@ -39,12 +39,18 @@
 
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-            <version>LATEST</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/sqljdbc42.jar</systemPath>
-            <optional>true</optional>
+            <artifactId>mssql-jdbc</artifactId>
+            <version>6.1.0.jre8</version>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.microsoft.sqlserver</groupId>-->
+            <!--<artifactId>sqljdbc4</artifactId>-->
+            <!--<version>LATEST</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${basedir}/lib/sqljdbc42.jar</systemPath>-->
+            <!--<optional>true</optional>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
